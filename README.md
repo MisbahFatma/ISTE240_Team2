@@ -2,7 +2,7 @@ MindEase – Mental Health Support for Students
 Group #2
 Team Members:
 Misbah Fatma Begum - 418008089
-
+Yara Alhammouri - 768008964
 
 
 Project Description:
