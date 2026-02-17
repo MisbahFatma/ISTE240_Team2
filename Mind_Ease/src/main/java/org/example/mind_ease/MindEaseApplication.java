@@ -1,4 +1,4 @@
-package org.example.mindease;
+package org.example.mind_ease;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

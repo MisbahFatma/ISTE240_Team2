@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.example</groupId>
-    <artifactId>MindEase</artifactId>
+    <artifactId>Mind_Ease</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>MindEase</name>
-    <description>MindEase</description>
+    <name>Mind_Ease</name>
+    <description>Mind_Ease</description>
     <url/>
     <licenses>
         <license/>
@@ -32,12 +32,12 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
