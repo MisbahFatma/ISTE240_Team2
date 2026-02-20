@@ -1,3 +1,8 @@
+/** Assignment 1: Team Members
+ * Misbah Fatma Begum : 418008089
+ * Yara Alhammouri - 768008964
+ * Ali jouni - 769009393
+ */
 package org.example.mind_ease.model;
 
 import org.springframework.stereotype.Component;
@@ -13,8 +18,12 @@ public class Resource {
     private String stressLevel;
 
 
-    public Resource () {
+
+    public Resource() {
+
     }
+
+
 
     public Resource(int id, String title, String type, String description, String link, String stressLevel) {
         this.id = id;
