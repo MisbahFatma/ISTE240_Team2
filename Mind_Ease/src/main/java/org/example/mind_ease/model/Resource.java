@@ -13,7 +13,7 @@ public class Resource {
     private String stressLevel;
 
 
-    public Resource() {
+    public Resource () {
     }
 
     public Resource(int id, String title, String type, String description, String link, String stressLevel) {
