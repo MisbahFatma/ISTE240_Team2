@@ -31,7 +31,8 @@ Students can log in to MindEase and navigate through the following sections:
     
 ## Team Members
 - Misbah Fatma Begum – 418008089
-- Ali Jouni – 769009393 
+- Ali Jouni – 769009393
+- Yara Alhammouri - 768008964
 
 **Overview:**  
 This assignment marks the first milestone in the development of the MindEase project. The goal is to demonstrate an understanding of Java Spring Boot fundamentals by creating a backend application scaffold with essential model classes (beans) and serving a static landing page.  
