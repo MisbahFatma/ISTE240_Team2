@@ -1,30 +1,20 @@
-/**Assignment 1: Team Members
- * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
- * Ali jouni - 769009393
- */
 package org.example.mind_ease.model;
 
-import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
-@Component
 public class Booking {
-
     private Long id;
-    private Long studentId;      // Which student booked
-    private Long counsellorId;   // Which counsellor
-    private LocalDateTime dateTime;  // Session date & time
-    private String status;       // Scheduled, Cancelled, Completed
+    private Student student;
+    private Counsellor counsellor;
+    private LocalDateTime dateTime;
+    private String status; // Scheduled, Cancelled, Completed
 
-    // Default constructor
     public Booking() {}
 
-    // Constructor with parameters (optional)
-    public Booking(Long id, Long studentId, Long counsellorId, LocalDateTime dateTime, String status) {
+    public Booking(Long id, Student student, Counsellor counsellor, LocalDateTime dateTime, String status) {
         this.id = id;
-        this.studentId = studentId;
-        this.counsellorId = counsellorId;
+        this.student = student;
+        this.counsellor = counsellor;
         this.dateTime = dateTime;
         this.status = status;
     }
@@ -33,11 +23,11 @@ public class Booking {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Long getStudentId() { return studentId; }
-    public void setStudentId(Long studentId) { this.studentId = studentId; }
+    public Student getStudent() { return student; }
+    public void setStudent(Student student) { this.student = student; }
 
-    public Long getCounsellorId() { return counsellorId; }
-    public void setCounsellorId(Long counsellorId) { this.counsellorId = counsellorId; }
+    public Counsellor getCounsellor() { return counsellor; }
+    public void setCounsellor(Counsellor counsellor) { this.counsellor = counsellor; }
 
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
