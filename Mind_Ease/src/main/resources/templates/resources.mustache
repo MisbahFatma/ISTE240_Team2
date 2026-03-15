@@ -1,0 +1,40 @@
+<!-- Assignment 2 :Team Members
+ Misbah Fatma Begum- 418008089
+ Yara Alhammouri - 768008964
+ Ali jouni - 769009393 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resources</title>
+</head>
+<body>
+<h1>Resource List</h1>
+
+<table style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th style="border: 1px solid black; padding: 5px;">ID</th>
+        <th style="border: 1px solid black; padding: 5px;">Title</th>
+        <th style="border: 1px solid black; padding: 5px;">Type</th>
+        <th style="border: 1px solid black; padding: 5px;">Description</th>
+        <th style="border: 1px solid black; padding: 5px;">Link</th>
+        <th style="border: 1px solid black; padding: 5px;">Stress Level</th>
+    </tr>
+    {{#resources}}
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">{{id}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{title}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{type}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{description}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{link}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{stressLevel}}</td>
+        </tr>
+    {{/resources}}
+</table>
+
+<br>
+<a href="/resources/add">Add New Resource</a> |
+<a href="/">Back to Home</a>
+</body>
+</html>

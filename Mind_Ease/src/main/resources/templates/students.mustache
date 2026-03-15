@@ -1,0 +1,34 @@
+<!-- Assignment 2 :Team Members
+ Misbah Fatma Begum- 418008089
+ Yara Alhammouri - 768008964
+ Ali jouni - 769009393 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Students</title>
+</head>
+<body>
+<h1>Student List</h1>
+
+<table style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th style="border: 1px solid black; padding: 5px;">ID</th>
+        <th style="border: 1px solid black; padding: 5px;">Name</th>
+        <th style="border: 1px solid black; padding: 5px;">Email</th>
+    </tr>
+    {{#students}}
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">{{id}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{name}}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{email}}</td>
+        </tr>
+    {{/students}}
+</table>
+
+<br>
+<a href="/students/add">Add New Student</a> |
+<a href="/">Back to Home</a>
+</body>
+</html>

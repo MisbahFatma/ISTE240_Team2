@@ -1,3 +1,8 @@
+/** Assignment 2: Team Members
+ * Misbah Fatma Begum : 418008089
+ * Yara Alhammouri - 768008964
+ * Ali jouni - 769009393
+ */
 package org.example.mind_ease.model;
 
 import java.time.LocalDateTime;
@@ -11,12 +16,22 @@ public class Booking {
 
     public Booking() {}
 
+    // Full constructor
     public Booking(Long id, Student student, Counsellor counsellor, LocalDateTime dateTime, String status) {
         this.id = id;
         this.student = student;
         this.counsellor = counsellor;
         this.dateTime = dateTime;
         this.status = status;
+    }
+
+    // Convenience constructor for form submission
+    public Booking(Student student, Counsellor counsellor, String dateTimeStr) {
+        this.id = System.currentTimeMillis(); // simple unique ID
+        this.student = student;
+        this.counsellor = counsellor;
+        this.dateTime = LocalDateTime.parse(dateTimeStr); // expects ISO-8601: "2026-03-15T14:30"
+        this.status = "Scheduled";
     }
 
     // Getters and Setters

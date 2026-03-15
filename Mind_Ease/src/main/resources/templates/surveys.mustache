@@ -1,0 +1,34 @@
+<!-- Assignment 2 :Team Members
+ Misbah Fatma Begum- 418008089
+ Yara Alhammouri - 768008964
+ Ali jouni - 769009393 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stress Surveys</title>
+</head>
+<body>
+<h1>Stress Survey List</h1>
+
+<table style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <th style="border: 1px solid black; padding: 5px;">Student</th>
+    <th style="border: 1px solid black; padding: 5px;">Stress Level</th>
+    <th style="border: 1px solid black; padding: 5px;">Date</th>
+  </tr>
+  {{#surveys}}
+  <tr>
+    <td style="border: 1px solid black; padding: 5px;">{{student.name}}</td>
+    <td style="border: 1px solid black; padding: 5px;">{{stressLevel}}</td>
+    <td style="border: 1px solid black; padding: 5px;">{{date}}</td>
+  </tr>
+  {{/surveys}}
+</table>
+
+<br>
+<a href="/surveys/add">Add New Survey</a> |
+<a href="/">Back to Home</a>
+</body>
+</html>

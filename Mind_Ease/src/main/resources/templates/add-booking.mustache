@@ -1,0 +1,40 @@
+<!-- Assignment 2 :Team Members
+ Misbah Fatma Begum- 418008089
+ Yara Alhammouri - 768008964
+ Ali jouni - 769009393 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Booking</title>
+</head>
+<body>
+<h1>Add Booking</h1>
+
+<form action="/bookings/add" method="post">
+  <label for="student">Student:</label>
+  <select id="student" name="studentId" required>
+    {{#students}}
+    <option value="{{id}}">{{name}}</option>
+    {{/students}}
+  </select><br><br>
+
+  <label for="counsellor">Counsellor:</label>
+  <select id="counsellor" name="counsellorId" required>
+    {{#counsellors}}
+    <option value="{{id}}">{{name}}</option>
+    {{/counsellors}}
+  </select><br><br>
+
+  <label for="dateTime">Date & Time:</label>
+  <input type="text" id="dateTime" name="dateTime" required><br><br>
+
+  <button type="submit">Add Booking</button>
+</form>
+
+<br>
+<a href="/bookings">View Bookings</a> |
+<a href="/">Back to Home</a>
+</body>
+</html>

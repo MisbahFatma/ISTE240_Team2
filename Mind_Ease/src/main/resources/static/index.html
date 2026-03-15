@@ -1,4 +1,4 @@
-<!-- Assignment 1 :Team Members
+<!-- Assignment 2 :Team Members
  Misbah Fatma Begum- 418008089
  Yara Alhammouri - 768008964
  Ali jouni - 769009393 -->
@@ -20,21 +20,21 @@
         h1 {
             font-size: 3em;
             margin-bottom: 20px;
-            color: #2a4730;  /* main heading color */
+            color: #2a4730;
         }
 
         h2 {
             font-size: 2em;
             margin-top: 40px;
             margin-bottom: 15px;
-            color: #6b8e23;  /* subheading color */
+            color: #6b8e23;
         }
 
         h3 {
             font-size: 1.5em;
             margin-top: 25px;
             margin-bottom: 10px;
-            color: #a0522d;  /* smaller headings color */
+            color: #a0522d;
         }
 
         p {
@@ -53,16 +53,37 @@
         nav a:hover {
             color: #6b8e23;
         }
-    </style>
 
+        .entity-section {
+            margin-top: 40px;
+        }
+
+        .entity-section a {
+            display: inline-block;
+            margin: 5px 15px;
+            padding: 10px 15px;
+            background-color: #6b8e23;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .entity-section a:hover {
+            background-color: #3a5a40;
+        }
+    </style>
 </head>
 <body>
+<h1>Welcome to MindEase</h1>
+
+<h2>Navigation</h2>
 <nav>
-    <a href="/survey">Survey</a>
+    <a href="/students">Students</a>
     <a href="/resources">Resources</a>
     <a href="/counsellors">Counsellors</a>
+    <a href="/bookings">Bookings</a>
+    <a href="/surveys">Surveys</a>
 </nav>
-<h1>Welcome to MindEase</h1>
 
 <h2>About MindEase</h2>
 <p>
@@ -74,15 +95,19 @@
     Users can navigate through MindEase easily: after logging in, students can access the survey section to input their stress levels and receive tailored recommendations. The resources page offers curated materials for managing stress, while the counsellor page allows students to view available professionals and book sessions directly. This structured flow ensures that students can monitor their mental health regularly, find helpful tools, and connect with support whenever needed.
 </p>
 
-<h3>Survey</h3>
-<p>Complete a short survey to see your stress level and get tips.</p>
-
-<h3>Resources</h3>
-<p>Discover curated videos, games, and articles to help manage stress.</p>
-
-<h3>Counsellors</h3>
-<p>Book a session with available professionals for guidance and support.</p>
-
+<div class="entity-section">
+    <h3>Quick Links</h3>
+    <a href="/students">View Students</a>
+    <a href="/students/add">Add Student</a>
+    <a href="/counsellors">View Counsellors</a>
+    <a href="/counsellors/add">Add Counsellor</a>
+    <a href="/resources">View Resources</a>
+    <a href="/resources/add">Add Resource</a>
+    <a href="/bookings">View Bookings</a>
+    <a href="/bookings/add">Add Booking</a>
+    <a href="/surveys">View Surveys</a>
+    <a href="/surveys/add">Add Survey</a>
+</div>
 
 </body>
 </html>

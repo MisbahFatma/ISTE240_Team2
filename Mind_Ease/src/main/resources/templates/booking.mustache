@@ -1,0 +1,33 @@
+<!-- Assignment 2 :Team Members
+ Misbah Fatma Begum- 418008089
+ Yara Alhammouri - 768008964
+ Ali jouni - 769009393 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bookings</title>
+</head>
+<body>
+<h1>Booking List</h1>
+
+<table style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <th style="border: 1px solid black; padding: 5px;">Student</th>
+    <th style="border: 1px solid black; padding: 5px;">Counsellor</th>
+    <th style="border: 1px solid black; padding: 5px;">Date & Time</th>
+  </tr>
+  {{#bookings}}
+  <tr>
+    <td style="border: 1px solid black; padding: 5px;">{{student.name}}</td>
+    <td style="border: 1px solid black; padding: 5px;">{{counsellor.name}}</td>
+    <td style="border: 1px solid black; padding: 5px;">{{dateTime}}</td>
+  </tr>
+  {{/bookings}}
+</table>
+
+<br>
+<a href="/bookings/add">Add New Booking</a> |
+<a href="/">Back to Home</a>
+</body>
+</html>
