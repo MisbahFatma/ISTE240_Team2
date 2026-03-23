@@ -56,3 +56,48 @@ This assignment marks the first milestone in the development of the MindEase pro
 - Integrate static web content with backend services.  
 - Practice professional Git workflows and collaborative development.
 
+
+
+## Assignment 2 Description
+
+**Course:** ISTE 240 – Web and Mobile
+  
+**Semester:** Spring 2026
+    
+## Team Members
+- Misbah Fatma Begum – 418008089
+
+**Overview:**  
+
+This assignment represents the second milestone of the MindEase project. The goal is to extend the existing Spring Boot backend application by implementing dynamic web pages using the Mustache template engine. The application will simulate a simple database using in-memory data structures and allow users to view and add data for different entities while demonstrating relationships between them.
+
+**Objectives:**  
+-Extend the Spring Boot project to support dynamic server-side rendering using Mustache templates.
+-Implement a Service class to manage in-memory data for all entities.
+-Create controllers to handle HTTP GET and POST requests for displaying and adding data.
+-Develop dynamic web pages to view and add data for each entity.
+-Demonstrate a relationship between at least two entities (e.g., Student and Booking).
+-Implement a success/confirmation page after adding new data.
+-Update the landing page with navigation links to all entity pages.
+-Continue using GitHub collaboratively with proper branching and commits.
+
+**Expected Deliverables:** 
+-Fully functional Spring Boot application with dynamic Mustache views.
+-A Service class managing lists of all entities with preloaded (seed) data.
+-Multiple controller classes handling routing, data display, and form submission.
+-Separate pages for:
+-Viewing entity data (tables)
+-Adding new data (forms)
+-Confirmation message (success page)
+-Linked entities demonstrating relationships (e.g., Student ↔ Booking).
+-Updated landing page (index.html) with navigation links.
+-Properly updated README file with team details and project description.
+-Clear GitHub contribution history using branches and commits.
+
+**Learning Outcomes:**  
+-Understand Spring MVC architecture (Controller, Service, View).
+-Implement server-side rendering with Mustache templates.
+-Handle HTTP requests (GET & POST) and form data.
+-Simulate a database using in-memory collections.
+-Design relationships between objects in a backend system.
+-Improve teamwork using Git branching and version control practices.
