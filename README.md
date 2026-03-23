@@ -66,6 +66,7 @@ This assignment marks the first milestone in the development of the MindEase pro
     
 ## Team Members
 - Misbah Fatma Begum – 418008089
+- Yara Alhammouri - 768008964
 
 **Overview:**  
 
