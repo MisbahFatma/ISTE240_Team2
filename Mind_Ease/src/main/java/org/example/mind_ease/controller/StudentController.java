@@ -6,43 +6,61 @@
 package org.example.mind_ease.controller;
 
 import org.example.mind_ease.model.Student;
-import org.example.mind_ease.service.MindEaseService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.example.mind_ease.repository.StudentRepository;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/students")
+@CrossOrigin(origins = "*")
 public class StudentController {
 
-    private final MindEaseService service;
+    private final StudentRepository repo;
 
-    // Constructor injection
-    public StudentController(MindEaseService service) {
-        this.service = service;
+    public StudentController(StudentRepository repo) {
+        this.repo = repo;
     }
 
-    // Display list of students
-    @GetMapping("/students")
-    public String showStudents(Model model) {
-        model.addAttribute("students", service.getStudents());
-        return "students";
+    // GET ALL
+    @GetMapping
+    public List<Student> getAll() {
+        return repo.findAll();
     }
 
-    // Show form to add student
-    @GetMapping("/students/add")
-    public String showAddStudentForm() {
-        return "add-student";
+    // GET BY ID
+    @GetMapping("/{id}")
+    public Student getById(@PathVariable Long id) {
+        return repo.findById(id).orElse(null);
     }
 
-    // Handle form submission
-    @PostMapping("/students/add")
-    public String addStudent(@RequestParam Long id,
-                             @RequestParam String name,
-                             @RequestParam String email) {
+    // SEARCH (required in rubric)
+    @GetMapping("/search")
+    public List<Student> search(@RequestParam String name) {
+        return repo.findByNameContaining(name);
+    }
 
-        Student student = new Student(id, name, email);
-        service.addStudent(student);
+    // CREATE
+    @PostMapping
+    public Student create(@RequestBody Student student) {
+        return repo.save(student);
+    }
 
-        return "redirect:/add/success/student";
+    // UPDATE
+    @PutMapping("/{id}")
+    public Student update(@PathVariable Long id,
+                          @RequestBody Student updated) {
+
+        return repo.findById(id).map(s -> {
+            s.setName(updated.getName());
+            s.setEmail(updated.getEmail());
+            return repo.save(s);
+        }).orElse(null);
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        repo.deleteById(id);
     }
 }

@@ -7,88 +7,76 @@ package org.example.mind_ease.controller;
 
 import org.example.mind_ease.model.StressSurvey;
 import org.example.mind_ease.model.Student;
-import org.example.mind_ease.service.MindEaseService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.example.mind_ease.repository.StressSurveyRepository;
+import org.example.mind_ease.repository.StudentRepository;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/surveys")
+@CrossOrigin(origins = "*")
 public class StressSurveyController {
 
-    private final MindEaseService service;
+    private final StressSurveyRepository surveyRepo;
+    private final StudentRepository studentRepo;
 
-    public StressSurveyController(MindEaseService service) {
-        this.service = service;
+    public StressSurveyController(StressSurveyRepository surveyRepo,
+                                  StudentRepository studentRepo) {
+        this.surveyRepo = surveyRepo;
+        this.studentRepo = studentRepo;
     }
 
-    // ==============================
-    // Display all surveys
-    // ==============================
-    @GetMapping("/surveys")
-    public String showSurveys(Model model) {
-        model.addAttribute("surveys", service.getSurveys());
-        return "surveys";
+    // GET ALL
+    @GetMapping
+    public List<StressSurvey> getAll() {
+        return surveyRepo.findAll();
     }
 
-    // ==============================
-    // Show form to add survey manually (admin use)
-    // ==============================
-    @GetMapping("/surveys/add")
-    public String showAddSurveyForm(Model model) {
-        model.addAttribute("students", service.getStudents());
-        return "add-survey";
+    // GET BY ID
+    @GetMapping("/{id}")
+    public StressSurvey getById(@PathVariable Long id) {
+        return surveyRepo.findById(id).orElse(null);
     }
 
-    @PostMapping("/surveys/add")
-    public String addSurvey(@RequestParam Long studentId,
-                            @RequestParam int stressLevel,
-                            @RequestParam String date) {
-
-        Student student = service.getStudents().stream()
-                .filter(s -> s.getId().equals(studentId))
-                .findFirst().orElse(null);
-
-        if(student != null) {
-            Long id = (long) (service.getSurveys().size() + 1);
-            StressSurvey survey = new StressSurvey(id, student, stressLevel, date);
-            service.addSurvey(survey);
-            student.getSurveys().add(survey);
-        }
-
-        return "redirect:/add/success/survey";
+    // SEARCH BY STUDENT
+    @GetMapping("/student/{studentId}")
+    public List<StressSurvey> getByStudent(@PathVariable Long studentId) {
+        return surveyRepo.findByStudentId(studentId);
     }
 
-    // ==============================
-    // Take survey (user-facing flow)
-    // ==============================
-    @GetMapping("/survey")
-    public String showSurveyQuestions(Model model) {
-        model.addAttribute("students", service.getStudents());
-        return "survey-questions"; // mustache template for user survey form
-    }
-
-    @PostMapping("/survey/submit")
-    public String submitSurvey(@RequestParam Long studentId,
+    // CREATE
+    @PostMapping
+    public StressSurvey create(@RequestParam Long studentId,
                                @RequestParam int stressLevel) {
 
-        Student student = service.getStudents().stream()
-                .filter(s -> s.getId().equals(studentId))
-                .findFirst().orElse(null);
+        Student student = studentRepo.findById(studentId).orElse(null);
+        if (student == null) return null;
 
-        if (student != null) {
-            Long id = (long) (service.getSurveys().size() + 1);
-            StressSurvey survey = new StressSurvey(id, student, stressLevel, java.time.LocalDate.now().toString());
-            service.addSurvey(survey);
-            student.getSurveys().add(survey);
-        }
+        StressSurvey survey = new StressSurvey(
+                stressLevel,
+                LocalDate.now().toString(),
+                student
+        );
 
-        // Redirect user to resources based on stress level
-        if (stressLevel <= 3) {
-            return "redirect:/resources?level=low";
-        } else if (stressLevel <= 7) {
-            return "redirect:/resources?level=medium";
-        } else {
-            return "redirect:/resources?level=high";
-        }
+        return surveyRepo.save(survey);
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public StressSurvey update(@PathVariable Long id,
+                               @RequestParam int stressLevel) {
+
+        return surveyRepo.findById(id).map(s -> {
+            s.setStressLevel(stressLevel);
+            return surveyRepo.save(s);
+        }).orElse(null);
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        surveyRepo.deleteById(id);
     }
 }

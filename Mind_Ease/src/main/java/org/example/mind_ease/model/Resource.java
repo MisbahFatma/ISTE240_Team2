@@ -6,18 +6,27 @@
 
 package org.example.mind_ease.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "resources")
 public class Resource {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String title;
     private String type;
     private String description;
     private String link;
-    private String stressLevel; // e.g., Low, Moderate, High
+    private String stressLevel;
 
+    // Default constructor (required by JPA)
     public Resource() {}
 
-    public Resource(int id, String title, String type, String description, String link, String stressLevel) {
-        this.id = id;
+    // Constructor without id (used for creating new objects)
+    public Resource(String title, String type, String description, String link, String stressLevel) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -26,21 +35,52 @@ public class Resource {
     }
 
     // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getLink() { return link; }
-    public void setLink(String link) { this.link = link; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getStressLevel() { return stressLevel; }
-    public void setStressLevel(String stressLevel) { this.stressLevel = stressLevel; }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getStressLevel() {
+        return stressLevel;
+    }
+
+    public void setStressLevel(String stressLevel) {
+        this.stressLevel = stressLevel;
+    }
 }
