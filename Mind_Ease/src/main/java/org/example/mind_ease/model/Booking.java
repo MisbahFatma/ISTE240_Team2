@@ -1,22 +1,34 @@
-/** Assignment 2: Team Members
+/** Assignment 3: Team Members
  * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
  * Ali jouni - 769009393
  */
 package org.example.mind_ease.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "bookings")
 public class Booking {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "student_id")
     private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "counsellor_id")
     private Counsellor counsellor;
+
     private LocalDateTime dateTime;
+
     private String status; // Scheduled, Cancelled, Completed
 
     public Booking() {}
 
-    // Full constructor
     public Booking(Long id, Student student, Counsellor counsellor, LocalDateTime dateTime, String status) {
         this.id = id;
         this.student = student;
@@ -25,16 +37,6 @@ public class Booking {
         this.status = status;
     }
 
-    // Convenience constructor for form submission
-    public Booking(Student student, Counsellor counsellor, String dateTimeStr) {
-        this.id = System.currentTimeMillis(); // simple unique ID
-        this.student = student;
-        this.counsellor = counsellor;
-        this.dateTime = LocalDateTime.parse(dateTimeStr); // expects ISO-8601: "2026-03-15T14:30"
-        this.status = "Scheduled";
-    }
-
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -1,19 +1,27 @@
-/** Assignment 2: Team Members
+/** Assignment 3: Team Members
  * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
  * Ali jouni - 769009393
  */
 package org.example.mind_ease.model;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "counsellors")
 public class Counsellor {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String specialization;
     private String email;
     private String availability;
+
+    @OneToMany(mappedBy = "counsellor")
     private List<Booking> bookings = new ArrayList<>();
 
     public Counsellor() {}
@@ -26,7 +34,6 @@ public class Counsellor {
         this.availability = availability;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
