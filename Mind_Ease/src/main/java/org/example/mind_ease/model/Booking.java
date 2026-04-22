@@ -4,6 +4,7 @@
  */
 package org.example.mind_ease.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -23,14 +24,14 @@ public class Booking {
     @JoinColumn(name = "counsellor_id")
     private Counsellor counsellor;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTime;
 
-    private String status; // Scheduled, Cancelled, Completed
+    private String status;
 
     public Booking() {}
 
-    public Booking(Long id, Student student, Counsellor counsellor, LocalDateTime dateTime, String status) {
-        this.id = id;
+    public Booking(Student student, Counsellor counsellor, LocalDateTime dateTime, String status) {
         this.student = student;
         this.counsellor = counsellor;
         this.dateTime = dateTime;

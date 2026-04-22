@@ -4,6 +4,7 @@
  */
 package org.example.mind_ease.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +23,12 @@ public class Counsellor {
     private String availability;
 
     @OneToMany(mappedBy = "counsellor")
+    @JsonIgnore
     private List<Booking> bookings = new ArrayList<>();
 
     public Counsellor() {}
 
-    public Counsellor(Long id, String name, String specialization, String email, String availability) {
-        this.id = id;
+    public Counsellor(String name, String specialization, String email, String availability) {
         this.name = name;
         this.specialization = specialization;
         this.email = email;
