@@ -1,6 +1,5 @@
 /** Assignment 2: Team Members
  * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
  * Ali jouni - 769009393
  */
 
@@ -22,10 +21,8 @@ public class Resource {
     private String link;
     private String stressLevel;
 
-    // Default constructor (required by JPA)
     public Resource() {}
 
-    // Constructor without id (used for creating new objects)
     public Resource(String title, String type, String description, String link, String stressLevel) {
         this.title = title;
         this.type = type;
@@ -34,53 +31,21 @@ public class Resource {
         this.stressLevel = stressLevel;
     }
 
-    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getLink() { return link; }
+    public void setLink(String link) { this.link = link; }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getStressLevel() {
-        return stressLevel;
-    }
-
-    public void setStressLevel(String stressLevel) {
-        this.stressLevel = stressLevel;
-    }
+    public String getStressLevel() { return stressLevel; }
+    public void setStressLevel(String stressLevel) { this.stressLevel = stressLevel; }
 }

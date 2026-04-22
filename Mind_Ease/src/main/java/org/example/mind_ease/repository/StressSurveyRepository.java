@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface StressSurveyRepository extends JpaRepository<StressSurvey, Long> {
 
-    List<StressSurvey> findByStudentId(Long studentId);
+    List<StressSurvey> findByStudent_Id(Long studentId);
 }

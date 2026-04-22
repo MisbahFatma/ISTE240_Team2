@@ -1,14 +1,11 @@
-/** Assignment 2: Team Members
- * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
- * Ali jouni - 769009393
- */
 package org.example.mind_ease.controller;
 
 import org.example.mind_ease.model.StressSurvey;
 import org.example.mind_ease.model.Student;
+import org.example.mind_ease.model.Resource;
 import org.example.mind_ease.repository.StressSurveyRepository;
 import org.example.mind_ease.repository.StudentRepository;
+import org.example.mind_ease.repository.ResourceRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,11 +18,14 @@ public class StressSurveyController {
 
     private final StressSurveyRepository surveyRepo;
     private final StudentRepository studentRepo;
+    private final ResourceRepository resourceRepo;
 
     public StressSurveyController(StressSurveyRepository surveyRepo,
-                                  StudentRepository studentRepo) {
+                                  StudentRepository studentRepo,
+                                  ResourceRepository resourceRepo) {
         this.surveyRepo = surveyRepo;
         this.studentRepo = studentRepo;
+        this.resourceRepo = resourceRepo;
     }
 
     // GET ALL
@@ -40,27 +40,31 @@ public class StressSurveyController {
         return surveyRepo.findById(id).orElse(null);
     }
 
-    // SEARCH BY STUDENT
+    // GET BY STUDENT
     @GetMapping("/student/{studentId}")
     public List<StressSurvey> getByStudent(@PathVariable Long studentId) {
         return surveyRepo.findByStudentId(studentId);
     }
 
-    // CREATE
+    // CREATE + RETURN RESOURCES
     @PostMapping
-    public StressSurvey create(@RequestParam Long studentId,
-                               @RequestParam int stressLevel) {
+    public List<Resource> create(@RequestParam Long studentId,
+                                 @RequestParam int stressLevel) {
 
         Student student = studentRepo.findById(studentId).orElse(null);
         if (student == null) return null;
 
         StressSurvey survey = new StressSurvey(
                 stressLevel,
-                LocalDate.now().toString(),
+                LocalDate.now(),
                 student
         );
 
-        return surveyRepo.save(survey);
+        surveyRepo.save(survey);
+
+        String category = getStressCategory(stressLevel);
+
+        return resourceRepo.findByStressLevel(category);
     }
 
     // UPDATE
@@ -78,5 +82,12 @@ public class StressSurveyController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         surveyRepo.deleteById(id);
+    }
+
+    // LOGIC
+    private String getStressCategory(int level) {
+        if (level <= 2) return "LOW";
+        else if (level == 3) return "MEDIUM";
+        else return "HIGH";
     }
 }

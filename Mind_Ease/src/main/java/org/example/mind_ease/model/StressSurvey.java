@@ -1,11 +1,12 @@
 /** Assignment 2: Team Members
  * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
  * Ali jouni - 769009393
  */
 package org.example.mind_ease.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "stress_surveys")
@@ -17,53 +18,30 @@ public class StressSurvey {
 
     private int stressLevel;
 
-    private String date;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
-    // Default constructor (required by JPA)
     public StressSurvey() {}
 
-    // Constructor for creating new surveys
-    public StressSurvey(int stressLevel, String date, Student student) {
+    public StressSurvey(int stressLevel, LocalDate date, Student student) {
         this.stressLevel = stressLevel;
         this.date = date;
         this.student = student;
     }
 
-    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public int getStressLevel() { return stressLevel; }
+    public void setStressLevel(int stressLevel) { this.stressLevel = stressLevel; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
-    public int getStressLevel() {
-        return stressLevel;
-    }
-
-    public void setStressLevel(int stressLevel) {
-        this.stressLevel = stressLevel;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
+    public Student getStudent() { return student; }
+    public void setStudent(Student student) { this.student = student; }
 }
