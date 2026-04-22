@@ -1,61 +1,71 @@
-/** Assignment 2: Team Members
+/** Assignment 3: Team Members
  * Misbah Fatma Begum : 418008089
- * Yara Alhammouri - 768008964
  * Ali jouni - 769009393
  */
 package org.example.mind_ease.controller;
 
 import org.example.mind_ease.model.Booking;
-import org.example.mind_ease.model.Counsellor;
-import org.example.mind_ease.model.Student;
-import org.example.mind_ease.service.MindEaseService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.example.mind_ease.service.BookingService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/bookings")
+@CrossOrigin(origins = "*")
 public class BookingController {
 
-    private final MindEaseService service;
+    private final BookingService bookingService;
 
-    public BookingController(MindEaseService service) {
-        this.service = service;
+    public BookingController(BookingService bookingService) {
+        this.bookingService = bookingService;
     }
 
-    // Display all bookings
-    @GetMapping("/bookings")
-    public String showBookings(Model model) {
-        model.addAttribute("bookings", service.getBookings()); // <-- fixed name
-        return "booking"; // matches booking.html
+    // GET ALL BOOKINGS
+    @GetMapping
+    public ResponseEntity<List<Booking>> getAllBookings() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    // Show form to add a booking
-    @GetMapping("/bookings/add")
-    public String showAddBookingForm(Model model) {
-        model.addAttribute("students", service.getStudents());
-        model.addAttribute("counsellors", service.getCounsellors());
-        return "add-booking";
+    // GET BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
+        return bookingService.getBookingById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Handle form submission
-    @PostMapping("/bookings/add")
-    public String addBooking(@RequestParam Long studentId,
-                             @RequestParam Long counsellorId,
-                             @RequestParam String dateTime) {
+    // SEARCH BY STATUS
+    @GetMapping("/search")
+    public ResponseEntity<List<Booking>> getBookingsByStatus(@RequestParam String status) {
+        return ResponseEntity.ok(bookingService.getBookingsByStatus(status));
+    }
 
-        Student student = service.getStudents().stream()
-                .filter(s -> s.getId().equals(studentId))
-                .findFirst().orElse(null);
+    // CREATE BOOKING
+    @PostMapping
+    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+        return ResponseEntity.ok(bookingService.saveBooking(booking));
+    }
 
-        Counsellor counsellor = service.getCounsellors().stream()
-                .filter(c -> c.getId().equals(counsellorId))
-                .findFirst().orElse(null);
+    // UPDATE BOOKING
+    @PutMapping("/{id}")
+    public ResponseEntity<Booking> updateBooking(@PathVariable Long id,
+                                                 @RequestBody Booking booking) {
 
-        if(student != null && counsellor != null) {
-            Booking booking = new Booking(student, counsellor, dateTime);
-            service.addBooking(booking);
+        Booking updated = bookingService.updateBooking(id, booking);
+
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        return "redirect:/add/success/booking";
+        return ResponseEntity.ok(updated);
+    }
+
+    // DELETE BOOKING
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
+        bookingService.deleteBooking(id);
+        return ResponseEntity.noContent().build();
     }
 }
