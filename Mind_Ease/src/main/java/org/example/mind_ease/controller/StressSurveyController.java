@@ -1,6 +1,5 @@
 package org.example.mind_ease.controller;
 
-import org.example.mind_ease.model.Resource;
 import org.example.mind_ease.model.StressSurvey;
 import org.example.mind_ease.service.StressSurveyService;
 import org.springframework.http.ResponseEntity;
@@ -39,33 +38,30 @@ public class StressSurveyController {
         return ResponseEntity.ok(surveyService.getSurveysByStudent(studentId));
     }
 
-    // CREATE SURVEY
+    // CREATE SURVEY (FIXED)
     @PostMapping
-    public ResponseEntity<List<Resource>> createSurvey(
+    public ResponseEntity<StressSurvey> createSurvey(
             @RequestParam Long studentId,
             @RequestParam int stressLevel) {
 
-        List<Resource> resources =
-                surveyService.createSurveyAndGetResources(studentId, stressLevel);
-
-        return ResponseEntity.ok(resources);
+        StressSurvey survey = surveyService.createSurvey(studentId, stressLevel);
+        return ResponseEntity.ok(survey);
     }
 
-    // UPDATE SURVEY
+    // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<StressSurvey> updateSurvey(
             @PathVariable Long id,
             @RequestParam int stressLevel) {
 
         try {
-            StressSurvey updated = surveyService.updateSurvey(id, stressLevel);
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.ok(surveyService.updateSurvey(id, stressLevel));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // DELETE SURVEY
+    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSurvey(@PathVariable Long id) {
         surveyService.deleteSurvey(id);

@@ -136,3 +136,28 @@ Content-Type: application/json
   "dateTime": "2026-04-25 10:00",
   "status": "CONFIRMED"
 }
+
+###
+
+### =========================
+### STRESS SURVEY - ADD DATA
+### =========================
+
+
+POST http://localhost:8080/api/surveys?studentId=1&stressLevel=2
+###
+POST http://localhost:8080/api/surveys?studentId=1&stressLevel=4
+###
+POST http://localhost:8080/api/surveys?studentId=2&stressLevel=3
+###
+POST http://localhost:8080/api/surveys?studentId=2&stressLevel=5
+###
+POST http://localhost:8080/api/surveys?studentId=3&stressLevel=1
+###
+POST http://localhost:8080/api/surveys?studentId=3&stressLevel=3
+###
+GET http://localhost:8080/api/surveys/student/1
+###
+GET http://localhost:8080/api/surveys/student/2
+###
+GET http://localhost:8080/api/surveys/student/3
