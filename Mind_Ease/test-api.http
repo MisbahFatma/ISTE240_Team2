@@ -1,0 +1,138 @@
+### ======================
+### STUDENTS
+### ======================
+
+# GET all students
+GET http://localhost:8080/api/students
+###
+
+# ADD student 1
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+  "name": "Ali Hassan",
+  "email": "ali@gmail.com"
+}
+
+###
+
+# ADD student 2
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+  "name": "Sara Ahmed",
+  "email": "sara@gmail.com"
+}
+
+###
+
+# ADD student 3
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+  "name": "Omar Khalid",
+  "email": "omar@gmail.com"
+}
+
+###
+
+# ======================
+# COUNSELLORS
+# ======================
+
+# GET all counsellors
+GET http://localhost:8080/api/counsellors
+
+###
+
+# ADD counsellor 1
+POST http://localhost:8080/api/counsellors
+Content-Type: application/json
+
+{
+  "name": "Dr. Fatima",
+  "specialization": "Anxiety",
+  "email": "fatima@clinic.com",
+  "availability": "Morning"
+}
+
+###
+
+# ADD counsellor 2
+POST http://localhost:8080/api/counsellors
+Content-Type: application/json
+
+{
+  "name": "Dr. Ahmed",
+  "specialization": "Depression",
+  "email": "ahmed@clinic.com",
+  "availability": "Evening"
+}
+
+###
+
+# ======================
+# RESOURCES
+# ======================
+
+GET http://localhost:8080/api/resources
+
+###
+# ADD resource 1
+POST http://localhost:8080/api/resources
+Content-Type: application/json
+
+{
+"title": "Deep Breathing Exercise",
+"type": "Video",
+"description": "Helps reduce anxiety quickly",
+"link": "https://youtube.com",
+"stressLevel": "LOW"
+}
+
+###
+# ADD resource 2
+POST http://localhost:8080/api/resources
+Content-Type: application/json
+
+{
+"title": "Time Management Guide",
+"type": "Article",
+"description": "Helps manage academic stress",
+"link": "https://example.com",
+"stressLevel": "MEDIUM"
+}
+
+###
+# ADD resource 3
+POST http://localhost:8080/api/resources
+Content-Type: application/json
+
+{
+"title": "Anxiety Coping Techniques",
+"type": "Video",
+"description": "Advanced stress control methods",
+"link": "https://youtube.com",
+"stressLevel": "HIGH"
+}
+
+###
+
+# ======================
+# BOOKING
+# ======================
+
+GET http://localhost:8080/api/bookings
+###
+POST http://localhost:8080/api/bookings
+Content-Type: application/json
+
+{
+  "student": { "id": 1 },
+  "counsellor": { "id": 1 },
+  "dateTime": "2026-04-25 10:00",
+  "status": "CONFIRMED"
+}

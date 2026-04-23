@@ -1,11 +1,8 @@
-/** Assignment 3: Team Members
- * Misbah Fatma Begum : 418008089
- * Ali jouni - 769009393
- */
 package org.example.mind_ease.controller;
 
 import org.example.mind_ease.model.Resource;
-import org.example.mind_ease.repository.ResourceRepository;
+import org.example.mind_ease.service.ResourceService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,52 +12,54 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ResourceController {
 
-    private final ResourceRepository repo;
+    private final ResourceService resourceService;
 
-    public ResourceController(ResourceRepository repo) {
-        this.repo = repo;
+    public ResourceController(ResourceService resourceService) {
+        this.resourceService = resourceService;
     }
 
-    // GET ALL
     @GetMapping
-    public List<Resource> getAll() {
-        return repo.findAll();
+    public ResponseEntity<List<Resource>> getAll() {
+        return ResponseEntity.ok(resourceService.getAll());
     }
 
-    // GET BY ID
     @GetMapping("/{id}")
-    public Resource getById(@PathVariable Long id) {
-        return repo.findById(id).orElse(null);
+    public ResponseEntity<Resource> getById(@PathVariable Long id) {
+        Resource resource = resourceService.getById(id);
+
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(resource);
     }
 
-    // SEARCH BY STRESS LEVEL
     @GetMapping("/search")
-    public List<Resource> search(@RequestParam String stressLevel) {
-        return repo.findByStressLevel(stressLevel);
+    public ResponseEntity<List<Resource>> search(@RequestParam String stressLevel) {
+        return ResponseEntity.ok(resourceService.search(stressLevel));
     }
 
-    // CREATE
     @PostMapping
-    public Resource create(@RequestBody Resource resource) {
-        return repo.save(resource);
+    public ResponseEntity<Resource> create(@RequestBody Resource resource) {
+        return ResponseEntity.ok(resourceService.save(resource));
     }
 
-    // UPDATE
     @PutMapping("/{id}")
-    public Resource update(@PathVariable Long id, @RequestBody Resource updated) {
-        return repo.findById(id).map(r -> {
-            r.setTitle(updated.getTitle());
-            r.setType(updated.getType());
-            r.setDescription(updated.getDescription());
-            r.setLink(updated.getLink());
-            r.setStressLevel(updated.getStressLevel());
-            return repo.save(r);
-        }).orElse(null);
+    public ResponseEntity<Resource> update(@PathVariable Long id,
+                                           @RequestBody Resource updated) {
+
+        Resource resource = resourceService.update(id, updated);
+
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(resource);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repo.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        resourceService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

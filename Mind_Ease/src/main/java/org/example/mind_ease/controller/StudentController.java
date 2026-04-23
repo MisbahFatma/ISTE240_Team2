@@ -1,11 +1,8 @@
-/** Assignment 2: Team Members
- * Misbah Fatma Begum : 418008089
- * Ali jouni - 769009393
- */
 package org.example.mind_ease.controller;
 
 import org.example.mind_ease.model.Student;
-import org.example.mind_ease.repository.StudentRepository;
+import org.example.mind_ease.service.StudentService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,51 +12,60 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class StudentController {
 
-    private final StudentRepository repo;
+    private final StudentService studentService;
 
-    public StudentController(StudentRepository repo) {
-        this.repo = repo;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
     // GET ALL
     @GetMapping
-    public List<Student> getAll() {
-        return repo.findAll();
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok(studentService.getAll());
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    public Student getById(@PathVariable Long id) {
-        return repo.findById(id).orElse(null);
+    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
+        Student student = studentService.getById(id);
+
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(student);
     }
 
-    // SEARCH (required in rubric)
+    // SEARCH
     @GetMapping("/search")
-    public List<Student> search(@RequestParam String name) {
-        return repo.findByNameContaining(name);
+    public ResponseEntity<List<Student>> searchStudents(@RequestParam String name) {
+        return ResponseEntity.ok(studentService.search(name));
     }
 
     // CREATE
     @PostMapping
-    public Student create(@RequestBody Student student) {
-        return repo.save(student);
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        return ResponseEntity.ok(studentService.save(student));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public Student update(@PathVariable Long id,
-                          @RequestBody Student updated) {
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id,
+                                                 @RequestBody Student updated) {
 
-        return repo.findById(id).map(s -> {
-            s.setName(updated.getName());
-            s.setEmail(updated.getEmail());
-            return repo.save(s);
-        }).orElse(null);
+        Student student = studentService.update(id, updated);
+
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(student);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repo.deleteById(id);
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        studentService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
