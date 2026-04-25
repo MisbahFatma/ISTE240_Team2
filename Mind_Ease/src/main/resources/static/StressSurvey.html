@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Stress Surveys</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body class="container mt-5">
+
+<h2 class="mb-4">Stress Surveys</h2>
+
+<!-- SEARCH -->
+<div class="mb-3">
+    <label for="search" class="form-label">Search by Student ID</label>
+    <input type="text" id="search" class="form-control" onkeyup="searchSurvey()">
+</div>
+
+<!-- ADD FORM -->
+<div class="card p-3 mb-4">
+    <h5>Add Survey</h5>
+
+    <label for="studentId" class="form-label mt-2">Student ID</label>
+    <input type="number" id="studentId" class="form-control">
+
+    <label for="stressLevel" class="form-label mt-2">Stress Level</label>
+    <input type="number" id="stressLevel" class="form-control">
+
+    <button class="btn btn-primary mt-3" onclick="addSurvey()">
+        Add Survey
+    </button>
+</div>
+
+<!-- TABLE -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>ID</th>
+        <th>Student ID</th>
+        <th>Stress Level</th>
+        <th>Date</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody id="table"></tbody>
+</table>
+
+<script>
+
+    const API = "/api/surveys";
+
+    /* ===================== LOAD ===================== */
+    function loadSurveys() {
+        fetch(API)
+            .then(r => r.json())
+            .then(renderTable);
+    }
+
+    /* ===================== RENDER ===================== */
+    function renderTable(data) {
+
+        let html = "";
+
+        for (let i = 0; i < data.length; i++) {
+
+            const s = data[i];
+
+            const studentId = s.student ? s.student.id : "N/A";
+            const stressLevel = s.stressLevel ?? "N/A";
+            const date = s.date ?? "N/A";
+
+            html += `
+            <tr>
+                <td>${s.id}</td>
+                <td>${studentId}</td>
+                <td>${stressLevel}</td>
+                <td>${date}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm"
+                            onclick="deleteSurvey(${s.id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+        }
+
+        document.getElementById("table").innerHTML = html;
+    }
+
+    /* ===================== ADD ===================== */
+    function addSurvey() {
+
+        const studentId = document.getElementById("studentId").value;
+        const stressLevel = document.getElementById("stressLevel").value;
+
+        if (!studentId || !stressLevel) {
+            alert("Fill all fields");
+            return;
+        }
+
+        fetch(`${API}?studentId=${studentId}&stressLevel=${stressLevel}`, {
+            method: "POST"
+        }).then(() => {
+            document.getElementById("studentId").value = "";
+            document.getElementById("stressLevel").value = "";
+            loadSurveys();
+        });
+    }
+
+    /* ===================== DELETE ===================== */
+    function deleteSurvey(id) {
+        fetch(`${API}/${id}`, {
+            method: "DELETE"
+        }).then(loadSurveys);
+    }
+
+    /* ===================== SEARCH ===================== */
+    function searchSurvey() {
+
+        const q = document.getElementById("search").value;
+
+        fetch(API)
+            .then(r => r.json())
+            .then(data => {
+
+                const filtered = data.filter(s =>
+                    s.student &&
+                    s.student.id.toString().includes(q)
+                );
+
+                renderTable(filtered);
+            });
+    }
+
+    /* ===================== INIT ===================== */
+    loadSurveys();
+
+</script>
+
+</body>
+</html>

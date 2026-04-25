@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Students</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body class="container mt-5">
+
+<h2 class="mb-4">Students</h2>
+
+<!-- SEARCH -->
+<div class="mb-3">
+    <label for="search" class="form-label">Search by Name</label>
+    <input type="text" id="search" class="form-control" onkeyup="searchStudent()">
+</div>
+
+<!-- ADD FORM -->
+<div class="card p-3 mb-4">
+    <h5>Add Student</h5>
+
+    <label for="name" class="form-label mt-2">Name</label>
+    <input type="text" id="name" class="form-control">
+
+    <label for="email" class="form-label mt-2">Email</label>
+    <input type="email" id="email" class="form-control">
+
+    <button class="btn btn-primary mt-3" onclick="addStudent()">Add Student</button>
+</div>
+
+<!-- TABLE -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="table"></tbody>
+</table>
+
+<script>
+
+    const API = "/api/students";
+
+    // LOAD DATA
+    function loadStudents() {
+        fetch(API)
+            .then(response => response.json())
+            .then(data => renderTable(data));
+    }
+
+    // RENDER TABLE
+    function renderTable(data) {
+        let rows = "";
+
+        data.forEach(student => {
+            rows += `
+        <tr>
+            <td>${student.id}</td>
+            <td>${student.name}</td>
+            <td>${student.email}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">Delete</button>
+            </td>
+        </tr>
+        `;
+        });
+
+        document.getElementById("table").innerHTML = rows;
+    }
+
+    // ADD STUDENT
+    function addStudent() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+
+        fetch(API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email
+            })
+        })
+            .then(() => {
+                loadStudents();
+                document.getElementById("name").value = "";
+                document.getElementById("email").value = "";
+            });
+    }
+
+    // DELETE STUDENT
+    function deleteStudent(id) {
+        fetch(API + "/" + id, {
+            method: "DELETE"
+        })
+            .then(() => loadStudents());
+    }
+
+    // SEARCH
+    function searchStudent() {
+        const query = document.getElementById("search").value.toLowerCase();
+
+        fetch(API)
+            .then(response => response.json())
+            .then(data => {
+                const filtered = data.filter(student =>
+                    student.name.toLowerCase().includes(query)
+                );
+                renderTable(filtered);
+            });
+    }
+
+    // INITIAL LOAD
+    loadStudents();
+
+</script>
+
+</body>
+</html>
