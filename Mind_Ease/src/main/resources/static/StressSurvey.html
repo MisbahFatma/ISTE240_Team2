@@ -1,144 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Stress Surveys</title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-
-<body class="container mt-5">
-
-<h2 class="mb-4">Stress Surveys</h2>
-
-<!-- SEARCH -->
-<div class="mb-3">
-    <label for="search" class="form-label">Search by Student ID</label>
-    <input type="text" id="search" class="form-control" onkeyup="searchSurvey()">
-</div>
-
-<!-- ADD FORM -->
-<div class="card p-3 mb-4">
-    <h5>Add Survey</h5>
-
-    <label for="studentId" class="form-label mt-2">Student ID</label>
-    <input type="number" id="studentId" class="form-control">
-
-    <label for="stressLevel" class="form-label mt-2">Stress Level</label>
-    <input type="number" id="stressLevel" class="form-control">
-
-    <button class="btn btn-primary mt-3" onclick="addSurvey()">
-        Add Survey
-    </button>
-</div>
-
-<!-- TABLE -->
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-        <th>ID</th>
-        <th>Student ID</th>
-        <th>Stress Level</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-
-    <tbody id="table"></tbody>
-</table>
-
-<script>
-
-    const API = "/api/surveys";
-
-    /* ===================== LOAD ===================== */
-    function loadSurveys() {
-        fetch(API)
-            .then(r => r.json())
-            .then(renderTable);
-    }
-
-    /* ===================== RENDER ===================== */
-    function renderTable(data) {
-
-        let html = "";
-
-        for (let i = 0; i < data.length; i++) {
-
-            const s = data[i];
-
-            const studentId = s.student ? s.student.id : "N/A";
-            const stressLevel = s.stressLevel ?? "N/A";
-            const date = s.date ?? "N/A";
-
-            html += `
-            <tr>
-                <td>${s.id}</td>
-                <td>${studentId}</td>
-                <td>${stressLevel}</td>
-                <td>${date}</td>
-                <td>
-                    <button class="btn btn-danger btn-sm"
-                            onclick="deleteSurvey(${s.id})">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        `;
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Stress Survey · MindEase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .survey-card {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 28px;
+            padding: 3rem 2.5rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 640px;
+            margin: 0 auto;
         }
+        .survey-step { display: none; }
+        .survey-step.active { display: block; animation: fadeUp 0.5s ease; }
 
-        document.getElementById("table").innerHTML = html;
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .emoji-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            background: var(--cream);
+            cursor: pointer;
+            transition: all 0.22s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .emoji-btn .emoji { font-size: 2.4rem; line-height: 1; transition: transform 0.2s; }
+        .emoji-btn .label { font-size: 0.72rem; color: var(--stone); font-weight: 500; text-align: center; }
+        .emoji-btn:hover { border-color: var(--forest); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(74,124,89,.12); }
+        .emoji-btn:hover .emoji { transform: scale(1.15); }
+        .emoji-btn.selected {
+            border-color: var(--forest);
+            background: var(--mint-light);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(74,124,89,.15);
+        }
+        .emoji-btn.selected .label { color: var(--forest); font-weight: 600; }
+
+        .step-num { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); margin-bottom: 0.5rem; }
+        .step-q { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.3; }
+        .step-sub { font-size: 0.9rem; color: var(--stone); margin-bottom: 0; }
+
+        .progress-dots { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s, transform 0.3s; }
+        .dot.active { background: var(--forest); transform: scale(1.3); }
+        .dot.done { background: var(--sage); }
+
+        .result-card {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .result-emoji { font-size: 5rem; margin-bottom: 1rem; animation: bounce 0.6s ease; }
+        @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+        .result-level { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--bark); }
+        .result-msg { font-size: 1rem; color: var(--stone); max-width: 380px; margin: 0.75rem auto 2rem; line-height: 1.65; }
+
+        /* history table */
+        .table-wrap { overflow-x: auto; border-radius: 14px; border: 1.5px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="index.html"><span class="brand-leaf">🌿</span> MindEase</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="survey.html">Survey</a></li>
+                <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
+                <li class="nav-item"><a class="nav-link" href="counsellors.html">Counsellors</a></li>
+                <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
+                <li class="nav-item"><a class="nav-link" href="users.html">Users</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-outline-forest btn-sm" href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="page-header">
+    <div class="container">
+        <p class="page-header-eyebrow">Stress Check-In</p>
+        <h1>How are you feeling today?</h1>
+        <p>Your honest answers help us tailor the best resources for you.</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+
+        <!-- SURVEY FORM -->
+        <div class="survey-card" id="surveyCard">
+            <div class="progress-dots" id="progressDots"></div>
+
+            <!-- Step 1 -->
+            <div class="survey-step active" id="step1">
+                <div class="step-num">Question 1 of 3</div>
+                <div class="step-q">How stressed do you feel <em>right now</em>?</div>
+                <div class="step-sub">Select the emoji that best describes your current state.</div>
+                <div class="emoji-grid">
+                    <button class="emoji-btn" onclick="selectEmoji(1,1,this)"><span class="emoji">😄</span><span class="label">Very Calm</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(1,2,this)"><span class="emoji">🙂</span><span class="label">Calm</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(1,3,this)"><span class="emoji">😐</span><span class="label">Neutral</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(1,4,this)"><span class="emoji">😟</span><span class="label">Stressed</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(1,5,this)"><span class="emoji">😰</span><span class="label">Very Stressed</span></button>
+                </div>
+                <button class="btn btn-forest w-100" onclick="nextStep(2)" id="btn1" disabled>Continue →</button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="survey-step" id="step2">
+                <div class="step-num">Question 2 of 3</div>
+                <div class="step-q">How well did you <em>sleep</em> last night?</div>
+                <div class="step-sub">Sleep is strongly linked to stress and mental wellbeing.</div>
+                <div class="emoji-grid">
+                    <button class="emoji-btn" onclick="selectEmoji(2,1,this)"><span class="emoji">😴</span><span class="label">Excellent</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(2,2,this)"><span class="emoji">🙂</span><span class="label">Good</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(2,3,this)"><span class="emoji">😑</span><span class="label">Fair</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(2,4,this)"><span class="emoji">😪</span><span class="label">Poor</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(2,5,this)"><span class="emoji">🥱</span><span class="label">Terrible</span></button>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-forest flex-grow-1" onclick="prevStep(1)">← Back</button>
+                    <button class="btn btn-forest flex-grow-1" onclick="nextStep(3)" id="btn2" disabled>Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="survey-step" id="step3">
+                <div class="step-num">Question 3 of 3</div>
+                <div class="step-q">How <em>manageable</em> does your workload feel?</div>
+                <div class="step-sub">Thinking about your assignments, exams, and responsibilities this week.</div>
+                <div class="emoji-grid">
+                    <button class="emoji-btn" onclick="selectEmoji(3,1,this)"><span class="emoji">😊</span><span class="label">Very Easy</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(3,2,this)"><span class="emoji">🙂</span><span class="label">Manageable</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(3,3,this)"><span class="emoji">😬</span><span class="label">Challenging</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(3,4,this)"><span class="emoji">😣</span><span class="label">Overwhelming</span></button>
+                    <button class="emoji-btn" onclick="selectEmoji(3,5,this)"><span class="emoji">🤯</span><span class="label">Impossible</span></button>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-forest flex-grow-1" onclick="prevStep(2)">← Back</button>
+                    <button class="btn btn-forest flex-grow-1" onclick="submitSurvey()" id="btn3" disabled>See My Results →</button>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="survey-step" id="stepResult">
+                <div class="result-card">
+                    <div class="result-emoji" id="resultEmoji">😌</div>
+                    <div class="result-level" id="resultLevel">Low Stress</div>
+                    <p class="result-msg" id="resultMsg">Great job checking in! You're doing well. Here are some gentle resources to maintain your balance.</p>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <a href="resources.html" id="resourceLink" class="btn btn-forest">View My Resources →</a>
+                        <button class="btn btn-outline-forest" onclick="resetSurvey()">Take Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SURVEY HISTORY -->
+        <div class="mt-5">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                <div>
+                    <p class="section-label mb-0">Your History</p>
+                    <h3 class="section-title mb-0" style="font-size:1.5rem;">Past Check-Ins</h3>
+                </div>
+                <div class="search-wrap" style="width:220px;">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="form-control" id="surveySearch" placeholder="Search surveys…" oninput="filterSurveys(this.value)"/>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="table-me" id="surveyTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Stress Score</th>
+                        <th>Sleep Score</th>
+                        <th>Workload Score</th>
+                        <th>Level</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="surveyBody">
+                    <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>No surveys recorded yet.</p></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Delete Survey</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body"><p style="font-size:.9rem;">Are you sure you want to delete this survey record?</p></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-forest btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger btn-sm" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+    const answers = { 1: 0, 2: 0, 3: 0 };
+    let allSurveys = [];
+    let deleteId = null;
+
+    // ── Progress dots ──
+    function renderDots(current) {
+        const dots = document.getElementById('progressDots');
+        dots.innerHTML = [1,2,3].map(i =>
+            `<div class="dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`
+        ).join('');
+    }
+    renderDots(1);
+
+    function selectEmoji(step, val, el) {
+        const grid = el.closest('.emoji-grid');
+        grid.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        answers[step] = val;
+        document.getElementById(`btn${step}`).disabled = false;
     }
 
-    /* ===================== ADD ===================== */
-    function addSurvey() {
+    function nextStep(n) {
+        document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
+        document.getElementById(`step${n}`).classList.add('active');
+        if (n <= 3) renderDots(n);
+        window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
 
-        const studentId = document.getElementById("studentId").value;
-        const stressLevel = document.getElementById("stressLevel").value;
+    function prevStep(n) { nextStep(n); }
 
-        if (!studentId || !stressLevel) {
-            alert("Fill all fields");
+    async function submitSurvey() {
+        const total = answers[1] + answers[2] + answers[3];
+        let level, emoji, msg;
+        if (total <= 6)  { level = 'LOW';      emoji = '😌'; msg = 'You\'re in a good place! Keep maintaining your healthy habits and self-care routine.'; }
+        else if (total <= 10){ level = 'MODERATE'; emoji = '😐'; msg = 'Some stress is normal. Check out our resources for helpful techniques to stay balanced.'; }
+        else              { level = 'HIGH';     emoji = '😰'; msg = 'It sounds like things are tough right now. We\'re here to help — please explore the resources below or reach out to a counsellor.'; }
+
+        document.getElementById('resultEmoji').textContent = emoji;
+        document.getElementById('resultLevel').textContent = level.charAt(0) + level.slice(1).toLowerCase() + ' Stress';
+        document.getElementById('resultMsg').textContent = msg;
+        document.getElementById('resourceLink').href = `resources.html?level=${level}`;
+
+        const btn = document.getElementById('btn3');
+        setLoading(btn, true);
+        try {
+            await apiFetch('/surveys', {
+                method: 'POST',
+                body: JSON.stringify({ userId: 1, stressScore: answers[1], sleepScore: answers[2], workloadScore: answers[3], stressLevel: level })
+            });
+            showToast('Survey saved!', 'success');
+        } catch { showToast('Saved locally only (backend offline).', 'info'); }
+        finally { setLoading(btn, false); }
+
+        document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('stepResult').classList.add('active');
+        loadSurveys();
+    }
+
+    function resetSurvey() {
+        [1,2,3].forEach(i => { answers[i] = 0; document.getElementById(`btn${i}`).disabled = true; });
+        document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+        nextStep(1);
+        renderDots(1);
+    }
+
+    // ── CRUD ──
+    async function loadSurveys() {
+        try {
+            allSurveys = await apiFetch('/surveys') || [];
+            renderSurveys(allSurveys);
+        } catch { /* backend offline */ }
+    }
+
+    function renderSurveys(data) {
+        const tbody = document.getElementById('surveyBody');
+        if (!data.length) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>No surveys recorded yet.</p></div></td></tr>`;
             return;
         }
-
-        fetch(`${API}?studentId=${studentId}&stressLevel=${stressLevel}`, {
-            method: "POST"
-        }).then(() => {
-            document.getElementById("studentId").value = "";
-            document.getElementById("stressLevel").value = "";
-            loadSurveys();
-        });
+        tbody.innerHTML = data.map(s => `
+        <tr>
+          <td>#${s.id}</td>
+          <td>${fmtDate(s.createdAt || s.date)}</td>
+          <td style="text-align:center">${s.stressScore || '–'}</td>
+          <td style="text-align:center">${s.sleepScore || '–'}</td>
+          <td style="text-align:center">${s.workloadScore || '–'}</td>
+          <td>${stressBadge(s.stressLevel)}</td>
+          <td>
+            <button class="btn btn-outline-forest btn-sm me-1" onclick="deleteSurvey(${s.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
     }
 
-    /* ===================== DELETE ===================== */
+    function filterSurveys(q) {
+        const f = allSurveys.filter(s => JSON.stringify(s).toLowerCase().includes(q.toLowerCase()));
+        renderSurveys(f);
+    }
+
     function deleteSurvey(id) {
-        fetch(`${API}/${id}`, {
-            method: "DELETE"
-        }).then(loadSurveys);
+        deleteId = id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 
-    /* ===================== SEARCH ===================== */
-    function searchSurvey() {
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+        try {
+            await apiFetch(`/surveys/${deleteId}`, { method: 'DELETE' });
+            showToast('Survey deleted.', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+            loadSurveys();
+        } catch (e) { showToast('Delete failed: ' + e.message, 'error'); }
+    });
 
-        const q = document.getElementById("search").value;
-
-        fetch(API)
-            .then(r => r.json())
-            .then(data => {
-
-                const filtered = data.filter(s =>
-                    s.student &&
-                    s.student.id.toString().includes(q)
-                );
-
-                renderTable(filtered);
-            });
-    }
-
-    /* ===================== INIT ===================== */
     loadSurveys();
-
 </script>
-
 </body>
 </html>

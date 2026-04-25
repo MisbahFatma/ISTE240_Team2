@@ -1,125 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Students</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Users · MindEase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--mint);
+            color: var(--forest-dk);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            flex-shrink: 0;
+        }
+        .table-wrap { overflow-x: auto; border-radius: 14px; border: 1.5px solid var(--border); }
+    </style>
 </head>
+<body>
 
-<body class="container mt-5">
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="index.html"><span class="brand-leaf">🌿</span> MindEase</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="survey.html">Survey</a></li>
+                <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
+                <li class="nav-item"><a class="nav-link" href="counsellors.html">Counsellors</a></li>
+                <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
+                <li class="nav-item"><a class="nav-link" href="users.html">Users</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-outline-forest btn-sm" href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-<h2 class="mb-4">Students</h2>
-
-<!-- SEARCH -->
-<div class="mb-3">
-    <label for="search" class="form-label">Search by Name</label>
-    <input type="text" id="search" class="form-control" onkeyup="searchStudent()">
+<div class="page-header">
+    <div class="container">
+        <p class="page-header-eyebrow">Management</p>
+        <h1>User Accounts</h1>
+        <p>Browse, add, edit, and manage all registered students.</p>
+    </div>
 </div>
 
-<!-- ADD FORM -->
-<div class="card p-3 mb-4">
-    <h5>Add Student</h5>
+<section class="py-5">
+    <div class="container">
+        <!-- Toolbar -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+            <div class="search-wrap" style="width:280px;">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Search by name or email…" oninput="filterUsers(this.value)"/>
+            </div>
+            <button class="btn btn-forest" onclick="openAddModal()">+ Add User</button>
+        </div>
 
-    <label for="name" class="form-label mt-2">Name</label>
-    <input type="text" id="name" class="form-control">
+        <!-- Loading -->
+        <div id="loadingState" class="d-flex justify-content-center py-5"><div class="spinner-me"></div></div>
 
-    <label for="email" class="form-label mt-2">Email</label>
-    <input type="email" id="email" class="form-control">
+        <!-- Table -->
+        <div class="table-wrap d-none" id="tableWrap">
+            <table class="table-me" id="usersTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Student ID</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th style="text-align:right">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="usersBody"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
-    <button class="btn btn-primary mt-3" onclick="addStudent()">Add Student</button>
+<!-- ADD / EDIT MODAL -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="userId"/>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="form-label">First Name *</label>
+                        <input type="text" id="firstName" class="form-control" placeholder="Sarah"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Last Name *</label>
+                        <input type="text" id="lastName" class="form-control" placeholder="Ahmed"/>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Email *</label>
+                        <input type="email" id="email" class="form-control" placeholder="student@uni.edu"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Student ID</label>
+                        <input type="text" id="studentId" class="form-control" placeholder="20220001"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Role</label>
+                        <select id="role" class="form-select">
+                            <option value="STUDENT">Student</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+                    <div class="col-12" id="passwordRow">
+                        <label class="form-label">Password *</label>
+                        <input type="password" id="password" class="form-control" placeholder="Min. 8 characters"/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-forest" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-forest" id="saveBtn" onclick="saveUser()">Save User</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- TABLE -->
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody id="table"></tbody>
-</table>
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Confirm Delete</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body"><p style="font-size:.9rem;">This will permanently delete <strong id="deleteUserName"></strong>. This action cannot be undone.</p></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-forest btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger btn-sm" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/global.js"></script>
 <script>
+    let allUsers = [];
+    let editingId = null;
+    let deleteId = null;
+    const userModal  = new bootstrap.Modal(document.getElementById('userModal'));
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
 
-    const API = "/api/students";
-
-    // LOAD DATA
-    function loadStudents() {
-        fetch(API)
-            .then(response => response.json())
-            .then(data => renderTable(data));
+    // ── LOAD ──
+    async function loadUsers() {
+        try {
+            allUsers = await apiFetch('/users') || [];
+        } catch {
+            // Seed demo data if backend offline
+            allUsers = [
+                { id:1, firstName:'Sarah', lastName:'Ahmed', email:'sarah@uni.edu', studentId:'20220001', role:'STUDENT', createdAt:'2026-01-15' },
+                { id:2, firstName:'Omar', lastName:'Hassan', email:'omar@uni.edu', studentId:'20220042', role:'STUDENT', createdAt:'2026-02-03' },
+                { id:3, firstName:'Lina', lastName:'Youssef', email:'lina@uni.edu', studentId:'20221087', role:'ADMIN', createdAt:'2026-01-10' },
+            ];
+        }
+        document.getElementById('loadingState').classList.add('d-none');
+        document.getElementById('tableWrap').classList.remove('d-none');
+        renderUsers(allUsers);
     }
 
-    // RENDER TABLE
-    function renderTable(data) {
-        let rows = "";
-
-        data.forEach(student => {
-            rows += `
-        <tr>
-            <td>${student.id}</td>
-            <td>${student.name}</td>
-            <td>${student.email}</td>
+    function renderUsers(data) {
+        const tbody = document.getElementById('usersBody');
+        if (!data.length) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👤</div><p>No users found.</p></div></td></tr>`;
+            return;
+        }
+        tbody.innerHTML = data.map(u => {
+            const initials = (u.firstName?.[0]||'') + (u.lastName?.[0]||'');
+            const roleBadge = u.role === 'ADMIN'
+                ? '<span class="badge-level" style="background:#e8d5f5;color:#5a2d82">Admin</span>'
+                : '<span class="badge-level badge-forest">Student</span>';
+            return `
+          <tr>
+            <td>#${u.id}</td>
             <td>
-                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">Delete</button>
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar">${initials}</div>
+                <span>${u.firstName} ${u.lastName}</span>
+              </div>
             </td>
-        </tr>
+            <td>${u.email}</td>
+            <td>${u.studentId || '–'}</td>
+            <td>${roleBadge}</td>
+            <td>${fmtDate(u.createdAt)}</td>
+            <td style="text-align:right">
+              <button class="btn btn-outline-forest btn-sm me-1" onclick="openEditModal(${u.id})">Edit</button>
+              <button class="btn btn-sm" style="border:1.5px solid #e0b4b4;color:#c0392b;border-radius:50px;font-size:0.8rem;padding:0.3rem 0.8rem;" onclick="confirmDelete(${u.id},'${u.firstName} ${u.lastName}')">Delete</button>
+            </td>
+          </tr>
         `;
-        });
-
-        document.getElementById("table").innerHTML = rows;
+        }).join('');
     }
 
-    // ADD STUDENT
-    function addStudent() {
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-
-        fetch(API, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: name,
-                email: email
-            })
-        })
-            .then(() => {
-                loadStudents();
-                document.getElementById("name").value = "";
-                document.getElementById("email").value = "";
-            });
+    // ── SEARCH ──
+    function filterUsers(q) {
+        const lq = q.toLowerCase();
+        const f = allUsers.filter(u =>
+            `${u.firstName} ${u.lastName} ${u.email} ${u.studentId}`.toLowerCase().includes(lq)
+        );
+        renderUsers(f);
     }
 
-    // DELETE STUDENT
-    function deleteStudent(id) {
-        fetch(API + "/" + id, {
-            method: "DELETE"
-        })
-            .then(() => loadStudents());
+    // ── ADD / EDIT MODALS ──
+    function openAddModal() {
+        editingId = null;
+        document.getElementById('modalTitle').textContent = 'Add User';
+        document.getElementById('userId').value = '';
+        ['firstName','lastName','email','studentId','password'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('role').value = 'STUDENT';
+        document.getElementById('passwordRow').style.display = 'block';
+        userModal.show();
     }
 
-    // SEARCH
-    function searchStudent() {
-        const query = document.getElementById("search").value.toLowerCase();
-
-        fetch(API)
-            .then(response => response.json())
-            .then(data => {
-                const filtered = data.filter(student =>
-                    student.name.toLowerCase().includes(query)
-                );
-                renderTable(filtered);
-            });
+    function openEditModal(id) {
+        const u = allUsers.find(x => x.id === id);
+        if (!u) return;
+        editingId = id;
+        document.getElementById('modalTitle').textContent = 'Edit User';
+        document.getElementById('userId').value = id;
+        document.getElementById('firstName').value = u.firstName || '';
+        document.getElementById('lastName').value  = u.lastName  || '';
+        document.getElementById('email').value     = u.email     || '';
+        document.getElementById('studentId').value = u.studentId || '';
+        document.getElementById('role').value      = u.role      || 'STUDENT';
+        document.getElementById('passwordRow').style.display = 'none';
+        userModal.show();
     }
 
-    // INITIAL LOAD
-    loadStudents();
+    async function saveUser() {
+        const btn = document.getElementById('saveBtn');
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName  = document.getElementById('lastName').value.trim();
+        const email     = document.getElementById('email').value.trim();
+        const studentId = document.getElementById('studentId').value.trim();
+        const role      = document.getElementById('role').value;
+        const password  = document.getElementById('password').value;
 
+        if (!firstName || !lastName || !email) { showToast('Please fill required fields.', 'error'); return; }
+
+        const payload = { firstName, lastName, email, studentId, role };
+        if (!editingId && password) payload.password = password;
+
+        setLoading(btn, true);
+        try {
+            if (editingId) {
+                await apiFetch(`/users/${editingId}`, { method: 'PUT', body: JSON.stringify(payload) });
+                showToast('User updated.', 'success');
+            } else {
+                await apiFetch('/users', { method: 'POST', body: JSON.stringify(payload) });
+                showToast('User added.', 'success');
+            }
+            userModal.hide();
+            loadUsers();
+        } catch (e) {
+            showToast('Save failed: ' + e.message, 'error');
+        } finally {
+            setLoading(btn, false);
+        }
+    }
+
+    // ── DELETE ──
+    function confirmDelete(id, name) {
+        deleteId = id;
+        document.getElementById('deleteUserName').textContent = name;
+        deleteModal.show();
+    }
+
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+        try {
+            await apiFetch(`/users/${deleteId}`, { method: 'DELETE' });
+            showToast('User deleted.', 'success');
+            deleteModal.hide();
+            loadUsers();
+        } catch (e) { showToast('Delete failed: ' + e.message, 'error'); }
+    });
+
+    loadUsers();
 </script>
-
 </body>
 </html>

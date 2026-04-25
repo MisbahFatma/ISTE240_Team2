@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Resources · MindEase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .level-filter { display:flex; gap:0.6rem; flex-wrap:wrap; }
+        .level-btn {
+            border: 1.5px solid var(--border);
+            background: var(--cream);
+            color: var(--bark);
+            border-radius: 50px;
+            padding: 0.4rem 1.1rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.84rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .level-btn:hover, .level-btn.active { background: var(--forest); color: #fff; border-color: var(--forest); }
+
+        .resource-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.22s, box-shadow 0.22s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .resource-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .resource-thumb {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+        }
+        .resource-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .resource-type { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stone); margin-bottom: 0.4rem; }
+        .resource-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.35; }
+        .resource-desc  { font-size: 0.84rem; color: var(--stone); line-height: 1.6; flex: 1; }
+        .resource-footer { padding: 0 1.25rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .save-btn {
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--stone);
+            border-radius: 50px;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .save-btn:hover { border-color: var(--forest); color: var(--forest); }
+        .save-btn.saved { background: var(--mint-light); border-color: var(--forest); color: var(--forest-dk); }
+
+        /* Table for admin */
+        .table-wrap { overflow-x: auto; border-radius: 14px; border: 1.5px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="index.html"><span class="brand-leaf">🌿</span> MindEase</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="survey.html">Survey</a></li>
+                <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
+                <li class="nav-item"><a class="nav-link" href="counsellors.html">Counsellors</a></li>
+                <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
+                <li class="nav-item"><a class="nav-link" href="users.html">Users</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-outline-forest btn-sm" href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="page-header">
+    <div class="container">
+        <p class="page-header-eyebrow">Self-Care</p>
+        <h1>Wellness Resources</h1>
+        <p>Personalized tips, videos, and tools tailored to your stress level.</p>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+
+        <!-- Filter + Add -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <div class="level-filter" id="levelFilter">
+                    <button class="level-btn active" onclick="filterByLevel('ALL', this)">All</button>
+                    <button class="level-btn" onclick="filterByLevel('LOW', this)">😌 Low Stress</button>
+                    <button class="level-btn" onclick="filterByLevel('MODERATE', this)">😐 Moderate</button>
+                    <button class="level-btn" onclick="filterByLevel('HIGH', this)">😰 High Stress</button>
+                </div>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="search-wrap" style="width:220px;">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search resources…" oninput="handleSearch(this.value)"/>
+                </div>
+                <button class="btn btn-forest btn-sm" onclick="openAddModal()">+ Add Resource</button>
+            </div>
+        </div>
+
+        <!-- Cards -->
+        <div id="loadingState" class="d-flex justify-content-center py-5"><div class="spinner-me"></div></div>
+        <div class="row g-4 d-none" id="cardsGrid"></div>
+
+        <!-- Admin Table -->
+        <div class="mt-5">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <p class="section-label mb-0">Admin View</p>
+                    <h3 class="section-title mb-0" style="font-size:1.5rem;">All Resources</h3>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="table-me">
+                    <thead>
+                    <tr><th>ID</th><th>Title</th><th>Type</th><th>Level</th><th>URL</th><th style="text-align:right">Actions</th></tr>
+                    </thead>
+                    <tbody id="resourcesBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal fade" id="resourceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add Resource</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="resourceId"/>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Title *</label>
+                        <input type="text" id="title" class="form-control" placeholder="5-Minute Breathing Exercise"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Type</label>
+                        <select id="type" class="form-select">
+                            <option value="VIDEO">Video</option>
+                            <option value="ARTICLE">Article</option>
+                            <option value="EXERCISE">Exercise</option>
+                            <option value="GAME">Game</option>
+                            <option value="TIP">Tip</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Stress Level</label>
+                        <select id="level" class="form-select">
+                            <option value="ALL">All Levels</option>
+                            <option value="LOW">Low</option>
+                            <option value="MODERATE">Moderate</option>
+                            <option value="HIGH">High</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="What does this resource cover?"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">URL / Link</label>
+                        <input type="url" id="url" class="form-control" placeholder="https://…"/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-forest" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-forest" id="saveBtn" onclick="saveResource()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Delete Resource</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body"><p style="font-size:.9rem;">Delete this resource permanently?</p></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-forest btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger btn-sm" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+    let allResources = [];
+    let savedIds = new Set(JSON.parse(localStorage.getItem('savedResources')||'[]'));
+    let currentLevel = 'ALL', currentSearch = '';
+    let editingId = null, deleteId = null;
+
+    const resourceModal = new bootstrap.Modal(document.getElementById('resourceModal'));
+    const deleteModal   = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    const EMOJI_MAP = { VIDEO:'🎬', ARTICLE:'📖', EXERCISE:'🧘', GAME:'🎮', TIP:'💡' };
+    const COLOR_MAP = { VIDEO:'#e8f3ff', ARTICLE:'#fff3e8', EXERCISE:'#e8f0e0', GAME:'#f3e8ff', TIP:'#fffbe8' };
+
+    const DEMO = [
+        { id:1, title:'Box Breathing Technique', type:'EXERCISE', level:'ALL', description:'A simple 4-step breathing exercise that activates the parasympathetic nervous system to reduce stress instantly.', url:'#' },
+        { id:2, title:'Understanding Academic Stress', type:'ARTICLE', level:'MODERATE', description:'Learn why students experience stress and evidence-based strategies to manage it effectively.', url:'#' },
+        { id:3, title:'5-Minute Guided Meditation', type:'VIDEO', level:'LOW', description:'A gentle meditation session designed to bring calm and focus to your day.', url:'#' },
+        { id:4, title:'Stress Relief Bubble Wrap Game', type:'GAME', level:'HIGH', description:'Pop virtual bubbles for an instant stress relief activity — science says it actually works!', url:'#' },
+        { id:5, title:'Progressive Muscle Relaxation', type:'EXERCISE', level:'HIGH', description:'Systematically tense and release muscle groups to release physical tension held from stress.', url:'#' },
+        { id:6, title:'Sleep Hygiene for Students', type:'ARTICLE', level:'MODERATE', description:'Practical tips to improve your sleep quality during exam season and high-stress periods.', url:'#' },
+        { id:7, title:'Nature Soundscape – Forest Rain', type:'VIDEO', level:'LOW', description:'Immerse yourself in peaceful nature sounds to restore calm and mental clarity.', url:'#' },
+        { id:8, title:'Quick Journaling Prompts', type:'TIP', level:'ALL', description:'5 thoughtful prompts to help you process your emotions and gain clarity through writing.', url:'#' },
+    ];
+
+    async function loadResources() {
+        try { allResources = await apiFetch('/resources') || []; }
+        catch { allResources = DEMO; }
+        document.getElementById('loadingState').classList.add('d-none');
+        document.getElementById('cardsGrid').classList.remove('d-none');
+
+        // Auto-filter from survey result
+        const params = new URLSearchParams(location.search);
+        const lvl = params.get('level');
+        if (lvl) {
+            currentLevel = lvl;
+            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+            const btn = [...document.querySelectorAll('.level-btn')].find(b => b.textContent.includes(lvl));
+            if (btn) btn.classList.add('active');
+        }
+
+        applyFilters();
+    }
+
+    function applyFilters() {
+        let f = allResources;
+        if (currentLevel !== 'ALL') f = f.filter(r => r.level === 'ALL' || r.level === currentLevel);
+        if (currentSearch) f = f.filter(r => `${r.title} ${r.description} ${r.type}`.toLowerCase().includes(currentSearch));
+        renderCards(f);
+        renderTable(allResources);
+    }
+
+    function filterByLevel(level, btn) {
+        currentLevel = level;
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilters();
+    }
+
+    function handleSearch(q) { currentSearch = q.toLowerCase(); applyFilters(); }
+
+    function renderCards(data) {
+        const grid = document.getElementById('cardsGrid');
+        if (!data.length) {
+            grid.innerHTML = `<div class="col-12"><div class="empty-state"><div class="empty-icon">📚</div><p>No resources found for this filter.</p></div></div>`;
+            return;
+        }
+        grid.innerHTML = data.map(r => {
+            const isSaved = savedIds.has(r.id);
+            return `
+          <div class="col-sm-6 col-lg-4">
+            <div class="resource-card">
+              <div class="resource-thumb" style="background:${COLOR_MAP[r.type]||'#f0f0f0'}">${EMOJI_MAP[r.type]||'📄'}</div>
+              <div class="resource-body">
+                <div class="resource-type">${r.type||'RESOURCE'}</div>
+                <div class="resource-title">${r.title}</div>
+                <div class="resource-desc">${r.description||''}</div>
+              </div>
+              <div class="resource-footer">
+                ${r.url && r.url !== '#' ? `<a href="${r.url}" target="_blank" class="btn btn-forest btn-sm">Read More →</a>` : `<button class="btn btn-outline-forest btn-sm" disabled>Coming Soon</button>`}
+                <button class="save-btn ${isSaved?'saved':''}" onclick="toggleSave(${r.id}, this)">
+                  ${isSaved ? '♥ Saved' : '♡ Save'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        }).join('');
+    }
+
+    function toggleSave(id, btn) {
+        if (savedIds.has(id)) {
+            savedIds.delete(id);
+            btn.textContent = '♡ Save';
+            btn.classList.remove('saved');
+            showToast('Removed from saved.', 'info');
+        } else {
+            savedIds.add(id);
+            btn.textContent = '♥ Saved';
+            btn.classList.add('saved');
+            showToast('Resource saved!', 'success');
+        }
+        localStorage.setItem('savedResources', JSON.stringify([...savedIds]));
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('resourcesBody');
+        if (!data.length) {
+            tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📚</div><p>No resources.</p></div></td></tr>`;
+            return;
+        }
+        tbody.innerHTML = data.map(r => `
+        <tr>
+          <td>#${r.id}</td>
+          <td><strong>${r.title}</strong></td>
+          <td><span class="badge-level badge-forest">${r.type||'–'}</span></td>
+          <td>${stressBadge(r.level)}</td>
+          <td>${r.url ? `<a href="${r.url}" target="_blank" style="color:var(--forest);font-size:0.82rem;">Open ↗</a>` : '–'}</td>
+          <td style="text-align:right">
+            <button class="btn btn-outline-forest btn-sm me-1" onclick="openEditModal(${r.id})">Edit</button>
+            <button class="btn btn-sm" style="border:1.5px solid #e0b4b4;color:#c0392b;border-radius:50px;font-size:0.8rem;padding:0.3rem 0.8rem;" onclick="confirmDelete(${r.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddModal() {
+        editingId = null;
+        document.getElementById('modalTitle').textContent = 'Add Resource';
+        ['resourceId','title','description','url'].forEach(id => document.getElementById(id).value='');
+        document.getElementById('type').value = 'ARTICLE';
+        document.getElementById('level').value = 'ALL';
+        resourceModal.show();
+    }
+
+    function openEditModal(id) {
+        const r = allResources.find(x => x.id === id);
+        if (!r) return;
+        editingId = id;
+        document.getElementById('modalTitle').textContent = 'Edit Resource';
+        document.getElementById('resourceId').value  = id;
+        document.getElementById('title').value       = r.title||'';
+        document.getElementById('type').value        = r.type||'ARTICLE';
+        document.getElementById('level').value       = r.level||'ALL';
+        document.getElementById('description').value = r.description||'';
+        document.getElementById('url').value         = r.url||'';
+        resourceModal.show();
+    }
+
+    async function saveResource() {
+        const btn = document.getElementById('saveBtn');
+        const payload = {
+            title:       document.getElementById('title').value.trim(),
+            type:        document.getElementById('type').value,
+            level:       document.getElementById('level').value,
+            description: document.getElementById('description').value.trim(),
+            url:         document.getElementById('url').value.trim(),
+        };
+        if (!payload.title) { showToast('Title is required.', 'error'); return; }
+        setLoading(btn, true);
+        try {
+            if (editingId) {
+                await apiFetch(`/resources/${editingId}`, { method:'PUT', body: JSON.stringify(payload) });
+                showToast('Resource updated.', 'success');
+            } else {
+                await apiFetch('/resources', { method:'POST', body: JSON.stringify(payload) });
+                showToast('Resource added.', 'success');
+            }
+            resourceModal.hide();
+            loadResources();
+        } catch (e) { showToast('Save failed: ' + e.message, 'error'); }
+        finally { setLoading(btn, false); }
+    }
+
+    function confirmDelete(id) {
+        deleteId = id;
+        deleteModal.show();
+    }
+
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+        try {
+            await apiFetch(`/resources/${deleteId}`, { method: 'DELETE' });
+            showToast('Resource deleted.', 'success');
+            deleteModal.hide();
+            loadResources();
+        } catch (e) { showToast('Delete failed: ' + e.message, 'error'); }
+    });
+
+    loadResources();
+</script>
+</body>
+</html>
