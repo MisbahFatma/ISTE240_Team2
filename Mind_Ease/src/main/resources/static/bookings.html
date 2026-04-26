@@ -14,7 +14,6 @@
 
     <a href="index.html" class="btn btn-secondary mb-3">Back to Home</a>
 
-    <!-- FORM -->
     <div class="card p-3 mb-4">
         <h4>Add / Update Booking</h4>
 
@@ -22,17 +21,13 @@
 
         <input class="form-control mb-2" id="studentId" placeholder="Student ID">
         <input class="form-control mb-2" id="counsellorId" placeholder="Counsellor ID">
-
-        <!-- IMPORTANT: use datetime-local -->
         <input class="form-control mb-2" id="dateTime" type="datetime-local">
-
         <input class="form-control mb-2" id="status" placeholder="Status e.g. Scheduled">
 
         <button class="btn btn-success" onclick="saveBooking()">Save</button>
         <button class="btn btn-warning" onclick="clearForm()">Clear</button>
     </div>
 
-    <!-- SEARCH -->
     <div class="card p-3 mb-4">
         <h4>Search</h4>
 
@@ -42,7 +37,6 @@
         <button class="btn btn-secondary" onclick="loadBookings()">Show All</button>
     </div>
 
-    <!-- TABLE -->
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
@@ -63,14 +57,12 @@
 <script>
     const apiUrl = "/api/bookings";
 
-    // LOAD ALL
     async function loadBookings() {
         const res = await fetch(apiUrl);
         const data = await res.json();
         displayBookings(data);
     }
 
-    // DISPLAY
     function displayBookings(bookings) {
         const table = document.getElementById("bookingTable");
         table.innerHTML = "";
@@ -92,10 +84,14 @@
         });
     }
 
-    // SAVE (CREATE / UPDATE)
     async function saveBooking() {
-
         const id = document.getElementById("bookingId").value;
+        const dateTimeValue = document.getElementById("dateTime").value;
+
+        if (!dateTimeValue) {
+            alert("Please select date and time.");
+            return;
+        }
 
         const booking = {
             student: {
@@ -104,7 +100,7 @@
             counsellor: {
                 id: Number(document.getElementById("counsellorId").value)
             },
-            dateTime: document.getElementById("dateTime").value,
+            dateTime: dateTimeValue + ":00",
             status: document.getElementById("status").value
         };
 
@@ -126,24 +122,22 @@
         loadBookings();
     }
 
-    // EDIT
     function editBooking(b) {
         document.getElementById("bookingId").value = b.id;
         document.getElementById("studentId").value = b.student ? b.student.id : "";
         document.getElementById("counsellorId").value = b.counsellor ? b.counsellor.id : "";
-        document.getElementById("dateTime").value = b.dateTime;
+        document.getElementById("dateTime").value = b.dateTime ? b.dateTime.substring(0, 16) : "";
         document.getElementById("status").value = b.status;
     }
 
-    // DELETE
     async function deleteBooking(id) {
         await fetch(`${apiUrl}/${id}`, {
             method: "DELETE"
         });
+
         loadBookings();
     }
 
-    // SEARCH
     async function searchBookings() {
         const status = document.getElementById("searchStatus").value;
 
@@ -153,7 +147,6 @@
         displayBookings(data);
     }
 
-    // CLEAR FORM
     function clearForm() {
         document.getElementById("bookingId").value = "";
         document.getElementById("studentId").value = "";
@@ -162,7 +155,6 @@
         document.getElementById("status").value = "";
     }
 
-    // INIT
     loadBookings();
 </script>
 
