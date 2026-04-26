@@ -90,7 +90,7 @@ Content-Type: application/json
 "title": "Deep Breathing Exercise",
 "type": "Video",
 "description": "Helps reduce anxiety quickly",
-"link": "https://youtube.com",
+"link": "https://www.youtube.com/shorts/-Mds98dWWL4",
 "stressLevel": "LOW"
 }
 
@@ -101,9 +101,9 @@ Content-Type: application/json
 
 {
 "title": "Time Management Guide",
-"type": "Article",
+"type": "video",
 "description": "Helps manage academic stress",
-"link": "https://example.com",
+"link": "https://www.youtube.com/shorts/cgbQw6EOLR8",
 "stressLevel": "MEDIUM"
 }
 
@@ -116,7 +116,7 @@ Content-Type: application/json
 "title": "Anxiety Coping Techniques",
 "type": "Video",
 "description": "Advanced stress control methods",
-"link": "https://youtube.com",
+"link": "https://www.youtube.com/shorts/BglgioFwmMc",
 "stressLevel": "HIGH"
 }
 
