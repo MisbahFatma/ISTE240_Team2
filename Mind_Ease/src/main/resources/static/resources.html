@@ -15,40 +15,31 @@
 </nav>
 
 <div class="container mt-5">
-
     <h1>Resources</h1>
-
     <a href="index.html" class="btn btn-secondary mb-3">Back to Home</a>
 
-    <!-- FORM -->
     <div class="card p-3 mb-4 shadow-sm">
         <h4>Add / Update Resource</h4>
 
         <input type="hidden" id="resourceId">
-
         <input class="form-control mb-2" id="title" placeholder="Title">
-        <input class="form-control mb-2" id="type" placeholder="Type (video/article/tip)">
+        <input class="form-control mb-2" id="type" placeholder="Type e.g. Video, Tip, Game">
         <input class="form-control mb-2" id="description" placeholder="Description">
-        <input class="form-control mb-2" id="link" placeholder="Link (URL)">
-        <input class="form-control mb-2" id="stressLevel" placeholder="Stress Level (e.g. Low / Medium / High)">
+        <input class="form-control mb-2" id="link" placeholder="Link">
+        <input class="form-control mb-2" id="stressLevel" placeholder="Stress Level e.g. Low, Medium, High">
 
         <button class="btn btn-success" onclick="saveResource()">Save</button>
         <button class="btn btn-warning" onclick="clearForm()">Clear</button>
     </div>
 
-    <!-- SEARCH (optional) -->
     <div class="card p-3 mb-4 shadow-sm">
         <h4>Search</h4>
-
-        <input class="form-control mb-2" id="searchType" placeholder="Search by type">
-
+        <input class="form-control mb-2" id="searchStressLevel" placeholder="Search by stress level">
         <button class="btn btn-primary" onclick="searchResources()">Search</button>
         <button class="btn btn-secondary" onclick="loadResources()">Show All</button>
     </div>
 
-    <!-- TABLE -->
     <table class="table table-bordered table-striped bg-white">
-
         <thead style="background-color:#6b8e6e; color:white;">
         <tr>
             <th>ID</th>
@@ -60,55 +51,42 @@
             <th>Actions</th>
         </tr>
         </thead>
-
         <tbody id="resourceTable"></tbody>
-
     </table>
 </div>
 
 <script>
-
     const apiUrl = "/api/resources";
 
-
-    // ---------------- LOAD ALL ----------------
     async function loadResources() {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        display(data);
+        const response = await fetch(apiUrl);
+        const resources = await response.json();
+        displayResources(resources);
     }
 
-
-    // ---------------- DISPLAY ----------------
-    function display(data) {
+    function displayResources(resources) {
         const table = document.getElementById("resourceTable");
         table.innerHTML = "";
 
-        data.forEach(r => {
+        resources.forEach(r => {
             table.innerHTML += `
-            <tr>
-                <td>${r.id}</td>
-                <td>${r.title}</td>
-                <td>${r.type}</td>
-                <td>${r.description}</td>
-                <td><a href="${r.link}" target="_blank">Open</a></td>
-                <td>${r.stressLevel}</td>
-                <td>
-                    <button class="btn btn-info btn-sm"
-                        onclick='edit(${JSON.stringify(r)})'>Edit</button>
-
-                    <button class="btn btn-danger btn-sm"
-                        onclick="deleteResource(${r.id})">Delete</button>
-                </td>
-            </tr>
-        `;
+                <tr>
+                    <td>${r.id}</td>
+                    <td>${r.title}</td>
+                    <td>${r.type}</td>
+                    <td>${r.description}</td>
+                    <td><a href="${r.link}" target="_blank">Open</a></td>
+                    <td>${r.stressLevel}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick='editResource(${JSON.stringify(r)})'>Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteResource(${r.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
         });
     }
 
-
-    // ---------------- SAVE ----------------
     async function saveResource() {
-
         const id = document.getElementById("resourceId").value;
 
         const resource = {
@@ -119,22 +97,25 @@
             stressLevel: document.getElementById("stressLevel").value
         };
 
-        const url = id ? `${apiUrl}/${id}` : apiUrl;
-        const method = id ? "PUT" : "POST";
-
-        await fetch(url, {
-            method: method,
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(resource)
-        });
+        if (id) {
+            await fetch(`${apiUrl}/${id}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(resource)
+            });
+        } else {
+            await fetch(apiUrl, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(resource)
+            });
+        }
 
         clearForm();
         loadResources();
     }
 
-
-    // ---------------- EDIT ----------------
-    function edit(r) {
+    function editResource(r) {
         document.getElementById("resourceId").value = r.id;
         document.getElementById("title").value = r.title;
         document.getElementById("type").value = r.type;
@@ -143,26 +124,18 @@
         document.getElementById("stressLevel").value = r.stressLevel;
     }
 
-
-    // ---------------- DELETE ----------------
     async function deleteResource(id) {
-        await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+        await fetch(`${apiUrl}/${id}`, {method: "DELETE"});
         loadResources();
     }
 
-
-    // ---------------- SEARCH ----------------
     async function searchResources() {
-        const type = document.getElementById("searchType").value;
-
-        const res = await fetch(`${apiUrl}/search?type=${type}`);
-        const data = await res.json();
-
-        display(data);
+        const stressLevel = document.getElementById("searchStressLevel").value;
+        const response = await fetch(`${apiUrl}/search?stressLevel=${stressLevel}`);
+        const resources = await response.json();
+        displayResources(resources);
     }
 
-
-    // ---------------- CLEAR ----------------
     function clearForm() {
         document.getElementById("resourceId").value = "";
         document.getElementById("title").value = "";
@@ -172,10 +145,7 @@
         document.getElementById("stressLevel").value = "";
     }
 
-
-    // INIT
     loadResources();
-
 </script>
 
 </body>
