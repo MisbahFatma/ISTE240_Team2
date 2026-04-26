@@ -24,19 +24,13 @@ public class Booking {
     @JoinColumn(name = "counsellor_id")
     private Counsellor counsellor;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    // FIXED: matches frontend ISO format
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateTime;
 
     private String status;
 
     public Booking() {}
-
-    public Booking(Student student, Counsellor counsellor, LocalDateTime dateTime, String status) {
-        this.student = student;
-        this.counsellor = counsellor;
-        this.dateTime = dateTime;
-        this.status = status;
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
