@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookings - MindEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h1 class="mb-4">Bookings</h1>
+
+    <a href="index.html" class="btn btn-secondary mb-3">Back to Home</a>
+
+    <div class="card p-3 mb-4">
+        <h4>Add / Update Booking</h4>
+
+        <input type="hidden" id="bookingId">
+
+        <input class="form-control mb-2" id="studentId" placeholder="Student ID">
+        <input class="form-control mb-2" id="counsellorId" placeholder="Counsellor ID">
+        <input class="form-control mb-2" id="dateTime" placeholder="Date Time e.g. 2026-04-25T14:30:00">
+        <input class="form-control mb-2" id="status" placeholder="Status e.g. Scheduled">
+
+        <button class="btn btn-success" onclick="saveBooking()">Save</button>
+        <button class="btn btn-warning" onclick="clearForm()">Clear</button>
+    </div>
+
+    <div class="card p-3 mb-4">
+        <h4>Search</h4>
+        <input class="form-control mb-2" id="searchStatus" placeholder="Search by status">
+        <button class="btn btn-primary" onclick="searchBookings()">Search</button>
+        <button class="btn btn-secondary" onclick="loadBookings()">Show All</button>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Student ID</th>
+            <th>Counsellor ID</th>
+            <th>Date Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="bookingTable"></tbody>
+    </table>
+</div>
+
+<script>
+    const apiUrl = "/api/bookings";
+
+    async function loadBookings() {
+        const response = await fetch(apiUrl);
+        const bookings = await response.json();
+        displayBookings(bookings);
+    }
+
+    function displayBookings(bookings) {
+        const table = document.getElementById("bookingTable");
+        table.innerHTML = "";
+
+        bookings.forEach(b => {
+            table.innerHTML += `
+                <tr>
+                    <td>${b.id}</td>
+                    <td>${b.student ? b.student.id : ""}</td>
+                    <td>${b.counsellor ? b.counsellor.id : ""}</td>
+                    <td>${b.dateTime}</td>
+                    <td>${b.status}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick='editBooking(${JSON.stringify(b)})'>Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    async function saveBooking() {
+        const id = document.getElementById("bookingId").value;
+
+        const booking = {
+            student: {
+                id: Number(document.getElementById("studentId").value)
+            },
+            counsellor: {
+                id: Number(document.getElementById("counsellorId").value)
+            },
+            dateTime: document.getElementById("dateTime").value,
+            status: document.getElementById("status").value
+        };
+
+        if (id) {
+            await fetch(`${apiUrl}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(booking)
+            });
+        } else {
+            await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(booking)
+            });
+        }
+
+        clearForm();
+        loadBookings();
+    }
+
+    function editBooking(b) {
+        document.getElementById("bookingId").value = b.id;
+        document.getElementById("studentId").value = b.student ? b.student.id : "";
+        document.getElementById("counsellorId").value = b.counsellor ? b.counsellor.id : "";
+        document.getElementById("dateTime").value = b.dateTime;
+        document.getElementById("status").value = b.status;
+    }
+
+    async function deleteBooking(id) {
+        await fetch(`${apiUrl}/${id}`, {
+            method: "DELETE"
+        });
+        loadBookings();
+    }
+
+    async function searchBookings() {
+        const status = document.getElementById("searchStatus").value;
+        const response = await fetch(`${apiUrl}/search?status=${status}`);
+        const bookings = await response.json();
+        displayBookings(bookings);
+    }
+
+    function clearForm() {
+        document.getElementById("bookingId").value = "";
+        document.getElementById("studentId").value = "";
+        document.getElementById("counsellorId").value = "";
+        document.getElementById("dateTime").value = "";
+        document.getElementById("status").value = "";
+    }
+
+    loadBookings();
+</script>
+
+</body>
+</html>
