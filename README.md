@@ -102,3 +102,45 @@ This assignment represents the second milestone of the MindEase project. The goa
 -Simulate a database using in-memory collections.
 -Design relationships between objects in a backend system.
 -Improve teamwork using Git branching and version control practices.
+
+
+## Assignment 3 Description
+
+**Course:** ISTE 240 – Web and Mobile
+
+**Semester:** Spring 2026
+
+## Team Members
+- Misbah Fatma Begum – 418008089
+
+**Overview:**
+
+This assignment marks the third milestone in the development of the MindEase project. The goal is to extend the system into a fully functional REST API application connected to a MySQL database, enabling persistent data storage and full CRUD operations for all entities.
+
+**Objectives:**
+
+- Develop RESTful APIs using Spring Boot for all core entities (Student, Counsellor, Booking, StressSurvey, Resource).
+- Integrate MySQL database using Spring Data JPA for persistent storage.
+- Implement entity relationships such as Student–Booking and Counsellor–Booking.
+- Provide full CRUD operations (Create, Read, Update, Delete) for all entities.
+- Connect frontend pages to backend using REST APIs and fetch requests.
+- Handle JSON data exchange between frontend and backend.
+Implement stress survey functionality to analyze student stress levels and recommend resources.
+- Use GitHub for version control with proper commits and collaboration.
+
+**Expected Deliverable:**
+- A fully functional Spring Boot REST API application connected to MySQL database.
+- All entity classes implemented with proper JPA annotations and relationships.
+- Complete CRUD operations for all entities.
+- Functional frontend pages interacting with backend APIs.
+- Properly tested API endpoints using browser or Postman. 
+- A properly formatted README with project details and API documentation.
+- Demonstrated use of GitHub for collaborative development with commits and branches.
+
+**Learning outcomes:**
+- Understand REST API development using Spring Boot.
+- Apply Spring Data JPA for database integration.
+- Implement relational database design using JPA relationships.
+- Connect frontend with backend using REST APIs.
+- Improve debugging and API testing skills.
+- Practice professional Git workflows and teamwork.
