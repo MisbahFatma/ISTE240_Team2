@@ -15,29 +15,40 @@
 </nav>
 
 <div class="container mt-5">
+
     <h1>Stress Surveys</h1>
+
     <a href="index.html" class="btn btn-secondary mb-3">Back to Home</a>
 
+    <!-- FORM -->
     <div class="card p-3 mb-4 shadow-sm">
         <h4>Add / Update Survey</h4>
 
         <input type="hidden" id="surveyId">
+
         <input class="form-control mb-2" id="studentId" placeholder="Student ID">
-        <input class="form-control mb-2" id="stressLevel" placeholder="Stress Level 1-5">
-        <input class="form-control mb-2" id="date" placeholder="Date e.g. 2026-04-25">
+
+        <input class="form-control mb-2" id="stressLevel" placeholder="Stress Level (1-5)">
+
+        <input type="date" class="form-control mb-2" id="date">
 
         <button class="btn btn-success" onclick="saveSurvey()">Save</button>
         <button class="btn btn-warning" onclick="clearForm()">Clear</button>
     </div>
 
+    <!-- SEARCH -->
     <div class="card p-3 mb-4 shadow-sm">
         <h4>Search</h4>
+
         <input class="form-control mb-2" id="searchLevel" placeholder="Search by stress level">
+
         <button class="btn btn-primary" onclick="searchSurveys()">Search</button>
         <button class="btn btn-secondary" onclick="loadSurveys()">Show All</button>
     </div>
 
+    <!-- TABLE -->
     <table class="table table-bordered table-striped bg-white">
+
         <thead style="background-color:#6b8e6e; color:white;">
         <tr>
             <th>ID</th>
@@ -47,87 +58,117 @@
             <th>Actions</th>
         </tr>
         </thead>
+
         <tbody id="surveyTable"></tbody>
+
     </table>
 </div>
 
 <script>
     const apiUrl = "/api/surveys";
 
+
+    // ---------------- LOAD ALL ----------------
     async function loadSurveys() {
-        const response = await fetch(apiUrl);
-        const surveys = await response.json();
-        displaySurveys(surveys);
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+        display(data);
     }
 
-    function displaySurveys(surveys) {
+
+    // ---------------- DISPLAY ----------------
+    function display(data) {
         const table = document.getElementById("surveyTable");
         table.innerHTML = "";
 
-        surveys.forEach(s => {
+        data.forEach(s => {
             table.innerHTML += `
-                <tr>
-                    <td>${s.id}</td>
-                    <td>${s.student ? s.student.id : ""}</td>
-                    <td>${s.stressLevel}</td>
-                    <td>${s.date}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick='editSurvey(${JSON.stringify(s)})'>Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteSurvey(${s.id})">Delete</button>
-                    </td>
-                </tr>
-            `;
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.student ? s.student.id : ""}</td>
+                <td>${s.stressLevel}</td>
+                <td>${s.date}</td>
+                <td>
+                    <button class="btn btn-info btn-sm"
+                        onclick='edit(${JSON.stringify(s)})'>Edit</button>
+
+                    <button class="btn btn-danger btn-sm"
+                        onclick="removeSurvey(${s.id})">Delete</button>
+                </td>
+            </tr>
+        `;
         });
     }
 
+
+    // ---------------- SAVE (FIXED) ----------------
     async function saveSurvey() {
+
         const id = document.getElementById("surveyId").value;
 
+        const studentId = document.getElementById("studentId").value;
+        const stressLevel = document.getElementById("stressLevel").value;
+        const date = document.getElementById("date").value;
+
+        if (!studentId || !stressLevel || !date) {
+            alert("Please fill all fields");
+            return;
+        }
+
         const survey = {
-            student: {
-                id: Number(document.getElementById("studentId").value)
-            },
-            stressLevel: Number(document.getElementById("stressLevel").value),
-            date: document.getElementById("date").value
+            student: { id: Number(studentId) },
+            stressLevel: Number(stressLevel),
+            date: date
         };
 
-        if (id) {
-            await fetch(`${apiUrl}/${id}`, {
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(survey)
-            });
-        } else {
-            await fetch(apiUrl, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(survey)
-            });
+        const url = id ? `${apiUrl}/${id}` : apiUrl;
+        const method = id ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(survey)
+        });
+
+        if (!res.ok) {
+            console.log(await res.text());
+            alert("Save failed — check console");
+            return;
         }
 
         clearForm();
         loadSurveys();
     }
 
-    function editSurvey(s) {
+
+    // ---------------- EDIT ----------------
+    function edit(s) {
         document.getElementById("surveyId").value = s.id;
         document.getElementById("studentId").value = s.student ? s.student.id : "";
         document.getElementById("stressLevel").value = s.stressLevel;
         document.getElementById("date").value = s.date;
     }
 
-    async function deleteSurvey(id) {
-        await fetch(`${apiUrl}/${id}`, {method: "DELETE"});
+
+    // ---------------- DELETE ----------------
+    async function removeSurvey(id) {
+        await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
         loadSurveys();
     }
 
+
+    // ---------------- SEARCH ----------------
     async function searchSurveys() {
         const level = document.getElementById("searchLevel").value;
-        const response = await fetch(`${apiUrl}/search?stressLevel=${level}`);
-        const surveys = await response.json();
-        displaySurveys(surveys);
+
+        const res = await fetch(`${apiUrl}/search?stressLevel=${level}`);
+        const data = await res.json();
+
+        display(data);
     }
 
+
+    // ---------------- CLEAR ----------------
     function clearForm() {
         document.getElementById("surveyId").value = "";
         document.getElementById("studentId").value = "";
@@ -135,7 +176,10 @@
         document.getElementById("date").value = "";
     }
 
+
+    // INIT
     loadSurveys();
+
 </script>
 
 </body>

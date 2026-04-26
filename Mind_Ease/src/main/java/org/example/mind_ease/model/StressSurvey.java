@@ -1,11 +1,9 @@
-/** Assignment 2: Team Members
- * Misbah Fatma Begum : 418008089
- * Ali jouni - 769009393
- */
 package org.example.mind_ease.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -21,8 +19,10 @@ public class StressSurvey {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
+    // 🔥 Prevent infinite recursion + clean JSON output
     @ManyToOne
     @JoinColumn(name = "student_id")
+    @JsonIgnoreProperties({"stressSurveys"}) // if Student has list back-reference
     private Student student;
 
     public StressSurvey() {}
@@ -33,15 +33,35 @@ public class StressSurvey {
         this.student = student;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public int getStressLevel() { return stressLevel; }
-    public void setStressLevel(int stressLevel) { this.stressLevel = stressLevel; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+    public int getStressLevel() {
+        return stressLevel;
+    }
 
-    public Student getStudent() { return student; }
-    public void setStudent(Student student) { this.student = student; }
+    public void setStressLevel(int stressLevel) {
+        this.stressLevel = stressLevel;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 }
