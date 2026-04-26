@@ -1,320 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>MindEase – Student Mental Wellness</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/global.css">
-    <style>
-        /* ─── HERO ─── */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 6rem 0 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.35;
-            pointer-events: none;
-        }
-        .blob-1 { width: 520px; height: 520px; background: var(--mint); top: -120px; right: -100px; animation: drift 8s ease-in-out infinite alternate; }
-        .blob-2 { width: 360px; height: 360px; background: var(--sage); bottom: -80px; left: -80px; animation: drift 11s ease-in-out infinite alternate-reverse; }
-        .blob-3 { width: 240px; height: 240px; background: var(--peach); top: 40%; left: 30%; animation: drift 9s ease-in-out infinite alternate; }
-        @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px,20px) scale(1.08); } }
-
-        .hero-eyebrow {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.78rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--forest);
-            opacity: 0.7;
-            margin-bottom: 1rem;
-        }
-        .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 7vw, 5.5rem);
-            line-height: 1.08;
-            color: var(--bark);
-            margin-bottom: 1.5rem;
-        }
-        .hero-title em { color: var(--forest); font-style: italic; }
-        .hero-sub {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 1.1rem;
-            color: var(--bark);
-            opacity: 0.72;
-            max-width: 480px;
-            line-height: 1.7;
-            margin-bottom: 2.5rem;
-        }
-        .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-
-        /* ─── NAV CARDS SECTION ─── */
-        .section-label {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.72rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--forest);
-            opacity: 0.6;
-            margin-bottom: 0.5rem;
-        }
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-            color: var(--bark);
-            margin-bottom: 3rem;
-        }
-
-        .nav-card {
-            background: var(--card-bg);
-            border: 1.5px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem 1.8rem;
-            text-decoration: none;
-            display: block;
-            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--mint);
-            opacity: 0;
-            transition: opacity 0.28s ease;
-            border-radius: inherit;
-        }
-        .nav-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(90,110,80,0.12); border-color: var(--forest); }
-        .nav-card:hover::before { opacity: 0.06; }
-        .nav-card-icon { font-size: 2.4rem; margin-bottom: 1rem; position: relative; }
-        .nav-card-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--bark); margin-bottom: 0.5rem; position: relative; }
-        .nav-card-desc { font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--bark); opacity: 0.6; line-height: 1.6; position: relative; }
-        .nav-card-arrow { position: absolute; bottom: 1.5rem; right: 1.5rem; font-size: 1.1rem; color: var(--forest); opacity: 0; transition: opacity 0.25s, transform 0.25s; }
-        .nav-card:hover .nav-card-arrow { opacity: 1; transform: translate(4px, -4px); }
-
-        /* ─── FEATURES STRIP ─── */
-        .features-strip { background: var(--forest); border-radius: 24px; padding: 3rem; color: var(--cream); }
-        .feat-item { text-align: center; }
-        .feat-num { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--mint-light); line-height: 1; }
-        .feat-label { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; opacity: 0.75; margin-top: 0.3rem; }
-
-        /* ─── EMERGENCY BANNER ─── */
-        .emergency-band {
-            background: linear-gradient(135deg, #fff5f5, #ffe8e8);
-            border: 1.5px solid #f5c6c6;
-            border-radius: 16px;
-            padding: 1.5rem 2rem;
-        }
-        .emergency-band h5 { font-family: 'Playfair Display', serif; color: #c0392b; }
-
-        /* ─── ANIMATIONS ─── */
-        .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp 0.7s ease forwards; }
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.35s; }
-        .delay-4 { animation-delay: 0.5s; }
-    </style>
+    <meta charset="UTF-8">
+    <title>MindEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+<body style="background-color:#f6f1e9;">
+
+<nav class="navbar navbar-expand-lg" style="background-color:#6b8e6e;">
     <div class="container">
-        <a class="navbar-brand" href="index.html">
-            <span class="brand-leaf">🌿</span> MindEase
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="survey.html">Survey</a></li>
-                <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
-                <li class="nav-item"><a class="nav-link" href="counsellors.html">Counsellors</a></li>
-                <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
-                <li class="nav-item"><a class="nav-link" href="users.html">Users</a></li>
-                <li class="nav-item ms-lg-2"><a class="btn btn-outline-forest btn-sm" href="login.html">Login</a></li>
-                <li class="nav-item ms-1"><a class="btn btn-forest btn-sm" href="register.html">Get Started</a></li>
-            </ul>
-        </div>
+        <a class="navbar-brand text-white fw-bold" href="index.html">MindEase</a>
     </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-    <div class="hero-blob blob-1"></div>
-    <div class="hero-blob blob-2"></div>
-    <div class="hero-blob blob-3"></div>
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
-                <p class="hero-eyebrow fade-in">Student Mental Wellness Platform</p>
-                <h1 class="hero-title fade-in delay-1">Your mind <em>deserves</em><br>a moment of<br>calm.</h1>
-                <p class="hero-sub fade-in delay-2">MindEase helps you check in with your stress levels, discover personalized self-care resources, and connect with campus counsellors — all in one gentle, supportive space.</p>
-                <div class="hero-actions fade-in delay-3">
-                    <a href="survey.html" class="btn btn-forest btn-lg">Take the Stress Survey →</a>
-                    <a href="register.html" class="btn btn-outline-forest btn-lg">Create Free Account</a>
-                </div>
-            </div>
-            <div class="col-lg-5 d-none d-lg-flex justify-content-center fade-in delay-4">
-                <div class="hero-illustration">
-                    <svg viewBox="0 0 400 400" width="380" height="380" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Soft circle background -->
-                        <circle cx="200" cy="200" r="180" fill="#e8f0e0" opacity="0.5"/>
-                        <!-- Leaves -->
-                        <ellipse cx="200" cy="120" rx="28" ry="55" fill="#6a9c6a" transform="rotate(-15 200 120)" opacity="0.8"/>
-                        <ellipse cx="165" cy="145" rx="22" ry="48" fill="#8ab88a" transform="rotate(-40 165 145)" opacity="0.7"/>
-                        <ellipse cx="235" cy="145" rx="22" ry="48" fill="#8ab88a" transform="rotate(40 235 145)" opacity="0.7"/>
-                        <!-- Stem -->
-                        <rect x="197" y="160" width="6" height="90" rx="3" fill="#5a7a5a"/>
-                        <!-- Pot -->
-                        <path d="M165 250 Q165 290 200 290 Q235 290 235 250 Z" fill="#c8a882"/>
-                        <rect x="158" y="245" width="84" height="12" rx="6" fill="#b8936e"/>
-                        <!-- Face emoji on pot -->
-                        <circle cx="200" cy="270" r="14" fill="#f5e6d0" opacity="0.6"/>
-                        <circle cx="195" cy="267" r="2.5" fill="#6a5a4a"/>
-                        <circle cx="205" cy="267" r="2.5" fill="#6a5a4a"/>
-                        <path d="M194 274 Q200 279 206 274" stroke="#6a5a4a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                        <!-- Stars -->
-                        <text x="80" y="130" font-size="22" opacity="0.4">✦</text>
-                        <text x="295" y="100" font-size="16" opacity="0.3">✦</text>
-                        <text x="310" y="230" font-size="18" opacity="0.35">✦</text>
-                        <text x="60" y="260" font-size="14" opacity="0.3">✦</text>
-                    </svg>
-                </div>
+<div class="container mt-5 text-center">
+    <h1 class="mb-3">Welcome to MindEase</h1>
+    <p class="lead">
+        A student support platform for stress awareness, counselling, bookings, surveys, and mental health resources.
+    </p>
+
+    <div class="row mt-5">
+
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 shadow-sm">
+                <h4>Students</h4>
+                <p>Manage student information.</p>
+                <a href="student.html" class="btn btn-success">Open</a>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- STATS STRIP -->
-<section class="py-5">
-    <div class="container">
-        <div class="features-strip">
-            <div class="row g-4 text-center">
-                <div class="col-6 col-md-3 feat-item">
-                    <div class="feat-num">5</div>
-                    <div class="feat-label">Stress Levels Tracked</div>
-                </div>
-                <div class="col-6 col-md-3 feat-item">
-                    <div class="feat-num">3</div>
-                    <div class="feat-label">Resource Categories</div>
-                </div>
-                <div class="col-6 col-md-3 feat-item">
-                    <div class="feat-num">24/7</div>
-                    <div class="feat-label">Always Available</div>
-                </div>
-                <div class="col-6 col-md-3 feat-item">
-                    <div class="feat-num">🌿</div>
-                    <div class="feat-label">Calm Environment</div>
-                </div>
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 shadow-sm">
+                <h4>Stress Survey</h4>
+                <p>Record and view stress survey results.</p>
+                <a href="surveys.html" class="btn btn-success">Open</a>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- NAV CARDS -->
-<section class="py-5">
-    <div class="container">
-        <p class="section-label">Explore MindEase</p>
-        <h2 class="section-title">Everything you need,<br>in one place.</h2>
-        <div class="row g-4">
-            <div class="col-sm-6 col-lg-4">
-                <a href="survey.html" class="nav-card">
-                    <div class="nav-card-icon">😌</div>
-                    <div class="nav-card-title">Stress Survey</div>
-                    <div class="nav-card-desc">A quick emoji-based check-in to understand your current stress level and guide your self-care journey.</div>
-                    <span class="nav-card-arrow">↗</span>
-                </a>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <a href="resources.html" class="nav-card">
-                    <div class="nav-card-icon">📚</div>
-                    <div class="nav-card-title">Personalized Resources</div>
-                    <div class="nav-card-desc">Stress-relief videos, tips, and activities curated based on your survey results.</div>
-                    <span class="nav-card-arrow">↗</span>
-                </a>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <a href="counsellors.html" class="nav-card">
-                    <div class="nav-card-icon">🩺</div>
-                    <div class="nav-card-title">Counsellors</div>
-                    <div class="nav-card-desc">Browse available campus counsellors and their specializations to find the right support for you.</div>
-                    <span class="nav-card-arrow">↗</span>
-                </a>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <a href="bookings.html" class="nav-card">
-                    <div class="nav-card-icon">📅</div>
-                    <div class="nav-card-title">Session Bookings</div>
-                    <div class="nav-card-desc">Create, view, update, or cancel your counselling session bookings easily.</div>
-                    <span class="nav-card-arrow">↗</span>
-                </a>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <a href="users.html" class="nav-card">
-                    <div class="nav-card-icon">👤</div>
-                    <div class="nav-card-title">User Management</div>
-                    <div class="nav-card-desc">Manage student accounts, profiles, and settings in one organized admin view.</div>
-                    <span class="nav-card-arrow">↗</span>
-                </a>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <a href="register.html" class="nav-card" style="border-color: var(--forest); background: linear-gradient(135deg, #f4f9f0, #e8f3e0);">
-                    <div class="nav-card-icon">🌱</div>
-                    <div class="nav-card-title">Start Your Journey</div>
-                    <div class="nav-card-desc">Create your free MindEase account and begin your personalized wellness experience today.</div>
-                    <span class="nav-card-arrow">↗</span>
-                </a>
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 shadow-sm">
+                <h4>Resources</h4>
+                <p>View resources based on stress level.</p>
+                <a href="resources.html" class="btn btn-success">Open</a>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- EMERGENCY -->
-<section class="py-4 pb-5">
-    <div class="container">
-        <div class="emergency-band">
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <div class="flex-shrink-0 fs-2">🆘</div>
-                <div class="flex-grow-1">
-                    <h5 class="mb-1">Need Immediate Support?</h5>
-                    <p class="mb-0" style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:#7a3030;">
-                        If you're in crisis, please reach out immediately.
-                        <strong>UAE Crisis Line: 800-HOPE (4673)</strong> &nbsp;|&nbsp;
-                        <strong>International: +971-4-422-2222</strong> &nbsp;|&nbsp;
-                        <strong>Campus Counselling: ext. 1200</strong>
-                    </p>
-                </div>
+        <div class="col-md-6 mb-3">
+            <div class="card p-4 shadow-sm">
+                <h4>Counsellors</h4>
+                <p>Manage counsellor information.</p>
+                <a href="counsellors.html" class="btn btn-success">Open</a>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- FOOTER -->
-<footer class="py-4 border-top">
-    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <span style="font-family:'Playfair Display',serif; color:var(--bark);">🌿 MindEase</span>
-        <span style="font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--bark); opacity:0.5;">© 2026 MindEase · ISTE 240 Final Project</span>
-    </div>
-</footer>
+        <div class="col-md-6 mb-3">
+            <div class="card p-4 shadow-sm">
+                <h4>Bookings</h4>
+                <p>Manage counselling appointments.</p>
+                <a href="bookings.html" class="btn btn-success">Open</a>
+            </div>
+        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/global.js"></script>
+    </div>
+</div>
+
 </body>
 </html>

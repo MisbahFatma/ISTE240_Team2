@@ -1,344 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Stress Survey · MindEase</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/global.css">
-    <style>
-        .survey-card {
-            background: #fff;
-            border: 1.5px solid var(--border);
-            border-radius: 28px;
-            padding: 3rem 2.5rem;
-            box-shadow: var(--shadow-lg);
-            max-width: 640px;
-            margin: 0 auto;
-        }
-        .survey-step { display: none; }
-        .survey-step.active { display: block; animation: fadeUp 0.5s ease; }
-
-        .emoji-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .emoji-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 0.5rem;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            background: var(--cream);
-            cursor: pointer;
-            transition: all 0.22s ease;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .emoji-btn .emoji { font-size: 2.4rem; line-height: 1; transition: transform 0.2s; }
-        .emoji-btn .label { font-size: 0.72rem; color: var(--stone); font-weight: 500; text-align: center; }
-        .emoji-btn:hover { border-color: var(--forest); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(74,124,89,.12); }
-        .emoji-btn:hover .emoji { transform: scale(1.15); }
-        .emoji-btn.selected {
-            border-color: var(--forest);
-            background: var(--mint-light);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(74,124,89,.15);
-        }
-        .emoji-btn.selected .label { color: var(--forest); font-weight: 600; }
-
-        .step-num { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); margin-bottom: 0.5rem; }
-        .step-q { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.3; }
-        .step-sub { font-size: 0.9rem; color: var(--stone); margin-bottom: 0; }
-
-        .progress-dots { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s, transform 0.3s; }
-        .dot.active { background: var(--forest); transform: scale(1.3); }
-        .dot.done { background: var(--sage); }
-
-        .result-card {
-            text-align: center;
-            padding: 1rem 0;
-        }
-        .result-emoji { font-size: 5rem; margin-bottom: 1rem; animation: bounce 0.6s ease; }
-        @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-        .result-level { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--bark); }
-        .result-msg { font-size: 1rem; color: var(--stone); max-width: 380px; margin: 0.75rem auto 2rem; line-height: 1.65; }
-
-        /* history table */
-        .table-wrap { overflow-x: auto; border-radius: 14px; border: 1.5px solid var(--border); }
-    </style>
+    <meta charset="UTF-8">
+    <title>Stress Surveys - MindEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+<body style="background-color:#f6f1e9;">
+
+<nav class="navbar" style="background-color:#6b8e6e;">
     <div class="container">
-        <a class="navbar-brand" href="index.html"><span class="brand-leaf">🌿</span> MindEase</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="survey.html">Survey</a></li>
-                <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
-                <li class="nav-item"><a class="nav-link" href="counsellors.html">Counsellors</a></li>
-                <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
-                <li class="nav-item"><a class="nav-link" href="users.html">Users</a></li>
-                <li class="nav-item ms-lg-2"><a class="btn btn-outline-forest btn-sm" href="login.html">Login</a></li>
-            </ul>
-        </div>
+        <a class="navbar-brand text-white fw-bold" href="index.html">MindEase</a>
     </div>
 </nav>
 
-<div class="page-header">
-    <div class="container">
-        <p class="page-header-eyebrow">Stress Check-In</p>
-        <h1>How are you feeling today?</h1>
-        <p>Your honest answers help us tailor the best resources for you.</p>
+<div class="container mt-5">
+    <h1>Stress Surveys</h1>
+    <a href="index.html" class="btn btn-secondary mb-3">Back to Home</a>
+
+    <div class="card p-3 mb-4 shadow-sm">
+        <h4>Add / Update Survey</h4>
+
+        <input type="hidden" id="surveyId">
+        <input class="form-control mb-2" id="studentId" placeholder="Student ID">
+        <input class="form-control mb-2" id="stressLevel" placeholder="Stress Level 1-5">
+        <input class="form-control mb-2" id="date" placeholder="Date e.g. 2026-04-25">
+
+        <button class="btn btn-success" onclick="saveSurvey()">Save</button>
+        <button class="btn btn-warning" onclick="clearForm()">Clear</button>
     </div>
+
+    <div class="card p-3 mb-4 shadow-sm">
+        <h4>Search</h4>
+        <input class="form-control mb-2" id="searchLevel" placeholder="Search by stress level">
+        <button class="btn btn-primary" onclick="searchSurveys()">Search</button>
+        <button class="btn btn-secondary" onclick="loadSurveys()">Show All</button>
+    </div>
+
+    <table class="table table-bordered table-striped bg-white">
+        <thead style="background-color:#6b8e6e; color:white;">
+        <tr>
+            <th>ID</th>
+            <th>Student ID</th>
+            <th>Stress Level</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="surveyTable"></tbody>
+    </table>
 </div>
 
-<section class="py-5">
-    <div class="container">
-
-        <!-- SURVEY FORM -->
-        <div class="survey-card" id="surveyCard">
-            <div class="progress-dots" id="progressDots"></div>
-
-            <!-- Step 1 -->
-            <div class="survey-step active" id="step1">
-                <div class="step-num">Question 1 of 3</div>
-                <div class="step-q">How stressed do you feel <em>right now</em>?</div>
-                <div class="step-sub">Select the emoji that best describes your current state.</div>
-                <div class="emoji-grid">
-                    <button class="emoji-btn" onclick="selectEmoji(1,1,this)"><span class="emoji">😄</span><span class="label">Very Calm</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(1,2,this)"><span class="emoji">🙂</span><span class="label">Calm</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(1,3,this)"><span class="emoji">😐</span><span class="label">Neutral</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(1,4,this)"><span class="emoji">😟</span><span class="label">Stressed</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(1,5,this)"><span class="emoji">😰</span><span class="label">Very Stressed</span></button>
-                </div>
-                <button class="btn btn-forest w-100" onclick="nextStep(2)" id="btn1" disabled>Continue →</button>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="survey-step" id="step2">
-                <div class="step-num">Question 2 of 3</div>
-                <div class="step-q">How well did you <em>sleep</em> last night?</div>
-                <div class="step-sub">Sleep is strongly linked to stress and mental wellbeing.</div>
-                <div class="emoji-grid">
-                    <button class="emoji-btn" onclick="selectEmoji(2,1,this)"><span class="emoji">😴</span><span class="label">Excellent</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(2,2,this)"><span class="emoji">🙂</span><span class="label">Good</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(2,3,this)"><span class="emoji">😑</span><span class="label">Fair</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(2,4,this)"><span class="emoji">😪</span><span class="label">Poor</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(2,5,this)"><span class="emoji">🥱</span><span class="label">Terrible</span></button>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-forest flex-grow-1" onclick="prevStep(1)">← Back</button>
-                    <button class="btn btn-forest flex-grow-1" onclick="nextStep(3)" id="btn2" disabled>Continue →</button>
-                </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="survey-step" id="step3">
-                <div class="step-num">Question 3 of 3</div>
-                <div class="step-q">How <em>manageable</em> does your workload feel?</div>
-                <div class="step-sub">Thinking about your assignments, exams, and responsibilities this week.</div>
-                <div class="emoji-grid">
-                    <button class="emoji-btn" onclick="selectEmoji(3,1,this)"><span class="emoji">😊</span><span class="label">Very Easy</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(3,2,this)"><span class="emoji">🙂</span><span class="label">Manageable</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(3,3,this)"><span class="emoji">😬</span><span class="label">Challenging</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(3,4,this)"><span class="emoji">😣</span><span class="label">Overwhelming</span></button>
-                    <button class="emoji-btn" onclick="selectEmoji(3,5,this)"><span class="emoji">🤯</span><span class="label">Impossible</span></button>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-forest flex-grow-1" onclick="prevStep(2)">← Back</button>
-                    <button class="btn btn-forest flex-grow-1" onclick="submitSurvey()" id="btn3" disabled>See My Results →</button>
-                </div>
-            </div>
-
-            <!-- Result -->
-            <div class="survey-step" id="stepResult">
-                <div class="result-card">
-                    <div class="result-emoji" id="resultEmoji">😌</div>
-                    <div class="result-level" id="resultLevel">Low Stress</div>
-                    <p class="result-msg" id="resultMsg">Great job checking in! You're doing well. Here are some gentle resources to maintain your balance.</p>
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        <a href="resources.html" id="resourceLink" class="btn btn-forest">View My Resources →</a>
-                        <button class="btn btn-outline-forest" onclick="resetSurvey()">Take Again</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SURVEY HISTORY -->
-        <div class="mt-5">
-            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-                <div>
-                    <p class="section-label mb-0">Your History</p>
-                    <h3 class="section-title mb-0" style="font-size:1.5rem;">Past Check-Ins</h3>
-                </div>
-                <div class="search-wrap" style="width:220px;">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="form-control" id="surveySearch" placeholder="Search surveys…" oninput="filterSurveys(this.value)"/>
-                </div>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table-me" id="surveyTable">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Date</th>
-                        <th>Stress Score</th>
-                        <th>Sleep Score</th>
-                        <th>Workload Score</th>
-                        <th>Level</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody id="surveyBody">
-                    <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>No surveys recorded yet.</p></div></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- DELETE MODAL -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title">Delete Survey</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body"><p style="font-size:.9rem;">Are you sure you want to delete this survey record?</p></div>
-            <div class="modal-footer">
-                <button class="btn btn-outline-forest btn-sm" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-danger btn-sm" id="confirmDelete">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/global.js"></script>
 <script>
-    const answers = { 1: 0, 2: 0, 3: 0 };
-    let allSurveys = [];
-    let deleteId = null;
+    const apiUrl = "/api/surveys";
 
-    // ── Progress dots ──
-    function renderDots(current) {
-        const dots = document.getElementById('progressDots');
-        dots.innerHTML = [1,2,3].map(i =>
-            `<div class="dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`
-        ).join('');
-    }
-    renderDots(1);
-
-    function selectEmoji(step, val, el) {
-        const grid = el.closest('.emoji-grid');
-        grid.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-        el.classList.add('selected');
-        answers[step] = val;
-        document.getElementById(`btn${step}`).disabled = false;
+    async function loadSurveys() {
+        const response = await fetch(apiUrl);
+        const surveys = await response.json();
+        displaySurveys(surveys);
     }
 
-    function nextStep(n) {
-        document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
-        document.getElementById(`step${n}`).classList.add('active');
-        if (n <= 3) renderDots(n);
-        window.scrollTo({ top: 200, behavior: 'smooth' });
+    function displaySurveys(surveys) {
+        const table = document.getElementById("surveyTable");
+        table.innerHTML = "";
+
+        surveys.forEach(s => {
+            table.innerHTML += `
+                <tr>
+                    <td>${s.id}</td>
+                    <td>${s.student ? s.student.id : ""}</td>
+                    <td>${s.stressLevel}</td>
+                    <td>${s.date}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick='editSurvey(${JSON.stringify(s)})'>Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSurvey(${s.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
     }
 
-    function prevStep(n) { nextStep(n); }
+    async function saveSurvey() {
+        const id = document.getElementById("surveyId").value;
 
-    async function submitSurvey() {
-        const total = answers[1] + answers[2] + answers[3];
-        let level, emoji, msg;
-        if (total <= 6)  { level = 'LOW';      emoji = '😌'; msg = 'You\'re in a good place! Keep maintaining your healthy habits and self-care routine.'; }
-        else if (total <= 10){ level = 'MODERATE'; emoji = '😐'; msg = 'Some stress is normal. Check out our resources for helpful techniques to stay balanced.'; }
-        else              { level = 'HIGH';     emoji = '😰'; msg = 'It sounds like things are tough right now. We\'re here to help — please explore the resources below or reach out to a counsellor.'; }
+        const survey = {
+            student: {
+                id: Number(document.getElementById("studentId").value)
+            },
+            stressLevel: Number(document.getElementById("stressLevel").value),
+            date: document.getElementById("date").value
+        };
 
-        document.getElementById('resultEmoji').textContent = emoji;
-        document.getElementById('resultLevel').textContent = level.charAt(0) + level.slice(1).toLowerCase() + ' Stress';
-        document.getElementById('resultMsg').textContent = msg;
-        document.getElementById('resourceLink').href = `resources.html?level=${level}`;
-
-        const btn = document.getElementById('btn3');
-        setLoading(btn, true);
-        try {
-            await apiFetch('/surveys', {
-                method: 'POST',
-                body: JSON.stringify({ userId: 1, stressScore: answers[1], sleepScore: answers[2], workloadScore: answers[3], stressLevel: level })
+        if (id) {
+            await fetch(`${apiUrl}/${id}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(survey)
             });
-            showToast('Survey saved!', 'success');
-        } catch { showToast('Saved locally only (backend offline).', 'info'); }
-        finally { setLoading(btn, false); }
+        } else {
+            await fetch(apiUrl, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(survey)
+            });
+        }
 
-        document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
-        document.getElementById('stepResult').classList.add('active');
+        clearForm();
         loadSurveys();
     }
 
-    function resetSurvey() {
-        [1,2,3].forEach(i => { answers[i] = 0; document.getElementById(`btn${i}`).disabled = true; });
-        document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-        nextStep(1);
-        renderDots(1);
+    function editSurvey(s) {
+        document.getElementById("surveyId").value = s.id;
+        document.getElementById("studentId").value = s.student ? s.student.id : "";
+        document.getElementById("stressLevel").value = s.stressLevel;
+        document.getElementById("date").value = s.date;
     }
 
-    // ── CRUD ──
-    async function loadSurveys() {
-        try {
-            allSurveys = await apiFetch('/surveys') || [];
-            renderSurveys(allSurveys);
-        } catch { /* backend offline */ }
+    async function deleteSurvey(id) {
+        await fetch(`${apiUrl}/${id}`, {method: "DELETE"});
+        loadSurveys();
     }
 
-    function renderSurveys(data) {
-        const tbody = document.getElementById('surveyBody');
-        if (!data.length) {
-            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>No surveys recorded yet.</p></div></td></tr>`;
-            return;
-        }
-        tbody.innerHTML = data.map(s => `
-        <tr>
-          <td>#${s.id}</td>
-          <td>${fmtDate(s.createdAt || s.date)}</td>
-          <td style="text-align:center">${s.stressScore || '–'}</td>
-          <td style="text-align:center">${s.sleepScore || '–'}</td>
-          <td style="text-align:center">${s.workloadScore || '–'}</td>
-          <td>${stressBadge(s.stressLevel)}</td>
-          <td>
-            <button class="btn btn-outline-forest btn-sm me-1" onclick="deleteSurvey(${s.id})">Delete</button>
-          </td>
-        </tr>
-      `).join('');
+    async function searchSurveys() {
+        const level = document.getElementById("searchLevel").value;
+        const response = await fetch(`${apiUrl}/search?stressLevel=${level}`);
+        const surveys = await response.json();
+        displaySurveys(surveys);
     }
 
-    function filterSurveys(q) {
-        const f = allSurveys.filter(s => JSON.stringify(s).toLowerCase().includes(q.toLowerCase()));
-        renderSurveys(f);
+    function clearForm() {
+        document.getElementById("surveyId").value = "";
+        document.getElementById("studentId").value = "";
+        document.getElementById("stressLevel").value = "";
+        document.getElementById("date").value = "";
     }
-
-    function deleteSurvey(id) {
-        deleteId = id;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
-
-    document.getElementById('confirmDelete').addEventListener('click', async () => {
-        try {
-            await apiFetch(`/surveys/${deleteId}`, { method: 'DELETE' });
-            showToast('Survey deleted.', 'success');
-            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-            loadSurveys();
-        } catch (e) { showToast('Delete failed: ' + e.message, 'error'); }
-    });
 
     loadSurveys();
 </script>
+
 </body>
 </html>
