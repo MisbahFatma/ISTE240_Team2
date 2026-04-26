@@ -112,7 +112,7 @@ This assignment represents the second milestone of the MindEase project. The goa
 
 ## Team Members
 - Misbah Fatma Begum – 418008089
-
+- Ali jouni - 769009393
 **Overview:**
 
 This assignment marks the third milestone in the development of the MindEase project. The goal is to extend the system into a fully functional REST API application connected to a MySQL database, enabling persistent data storage and full CRUD operations for all entities.
